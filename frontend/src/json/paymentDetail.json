@@ -1,0 +1,34 @@
+{
+  "_idBooking": 61728127,
+  "namaTeam": "Atap Gunung",
+  "detailTeam": [
+    {
+      "_id": 1,
+      "nameMember": "Rafi Dimas Ariyanto",
+      "addressMember": "Jl.Bendo No.65,Jombang",
+      "numberIdMember": 1234234567890456,
+      "telephoneMember": 6281888731822
+    },
+    {
+      "_id": 2,
+      "nameMember": "Rafi Dimas Ariyanto",
+      "addressMember": "Jl.Bendo No.65,Jombang",
+      "numberIdMember": 1234234567890456,
+      "telephoneMember": 6281888731822
+    },
+    {
+      "_id": 3,
+      "nameMember": "Rafi Dimas Ariyanto",
+      "addressMember": "Jl.Bendo No.65,Jombang",
+      "numberIdMember": 1234234567890456,
+      "telephoneMember": 6281888731822
+    },
+    {
+      "_id": 4,
+      "nameMember": "Rafi Dimas Ariyanto",
+      "addressMember": "Jl.Bendo No.65,Jombang",
+      "numberIdMember": 1234234567890456,
+      "telephoneMember": 6281888731822
+    }
+  ]
+}
