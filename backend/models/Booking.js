@@ -1,0 +1,49 @@
+const mongoose=require('mongoose')
+
+const BookingSchema=new mongoose.Schema({
+    bookingStartDate:{
+        type:Date,
+        required:true
+    },
+    bookingEndDate:{
+        type:Date,
+        required:true
+    },
+    itemId:[{
+        _id:{
+            type:ObjectId,
+            required:true,
+            ref:"Item"
+        },
+        price:{
+            type:Number,
+            required:true,
+        },
+        day:{
+            type:Number,
+            required:true,
+        }
+    }],
+    memberId:{
+        type:ObjectId,
+        ref:"Member"
+    },
+    bankId:{
+        type:ObjectId,
+        ref:"Bank"
+    },
+    proofPayment:{
+        type:String,
+        required:true
+    },
+    bankForm:{
+        type:String,
+        required:true
+    },
+    accountHolder:{
+        type:String,
+        required:true
+    },
+})
+
+module.exports=mongoose.model('Booking',BookingSchema)
