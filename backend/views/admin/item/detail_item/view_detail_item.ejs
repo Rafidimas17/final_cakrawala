@@ -15,7 +15,7 @@
 
       <!-- Begin Page Content -->
       <div class="container-fluid">
-        <%- include('../../../partials/message.ejs') %>
+        <%- include('../../../partials/alert.ejs') %>
 
         <!-- Page Heading -->
         <h1 class="h3 mb-4 text-gray-800">Detail Item</h1>
@@ -79,7 +79,7 @@
 </div>
 <%- include('show_modal_activity.ejs') %>
 <%- include('show_modal_feature.ejs') %>
-<%- include('../../../partials/js.ejs') %>
+<%- include('../../../partials/script.ejs') %>
 <script>
   $(document).ready(function () {
     $('#dataTableActivity').DataTable();
@@ -90,18 +90,18 @@
     let name = $(this).data('name');
     let type = $(this).data('type');
     $('#edit-modal').modal('show');
-    $('.id').val(id);
-    $('.name').val(name);
-    $('.type').val(type);
+    $('#id').val(id);
+    $('#name').val(name);
+    $('#type').val(type);
   })
 
   $('#dataTable').on('click', '.button-update', function () {
     let id = $(this).data('id');
     let name = $(this).data('name');
     let qty = $(this).data('qty');
-    $('#edit-modal').modal('show');
-    $('.id').val(id);
+    $('#edit-modal-feature').modal('show');
+    $('#id').val(id);
     $('.name').val(name);
-    $('.qty').val(qty);
+    $('#qty').val(qty);
   })
 </script>

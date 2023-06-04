@@ -7,9 +7,11 @@ const mongoose=require('mongoose')
 const methodOverride=require('method-override')
 const session=require('express-session')
 const flash=require('connect-flash')
-mongoose.connect("mongodb://127.0.0.1:27017/cakrawala",{
-  useNewUrlParser:true,
-  useUnifiedTopology:true,
+mongoose.connect("mongodb://127.0.0.1:27017/db_cakrawala",{
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: true,
+  useUnifiedTopology: true
 })
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

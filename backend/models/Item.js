@@ -46,9 +46,9 @@ const itemSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Feature'
   }],
-  favoriteId: [{
+  activityId: [{
     type: ObjectId,
-    ref: 'Favorite'
+    ref: 'Activity'
   }]
 })
 

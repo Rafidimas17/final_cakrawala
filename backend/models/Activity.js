@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
 
-const favoriteSchema = new mongoose.Schema({
+const activitySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -23,4 +23,4 @@ const favoriteSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('Favorite', favoriteSchema)
+module.exports = mongoose.model('Activity', activitySchema)
