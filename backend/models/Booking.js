@@ -1,49 +1,68 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema;
 
-const BookingSchema=new mongoose.Schema({
-    bookingStartDate:{
-        type:Date,
-        required:true
+const bookingSchema = new mongoose.Schema({
+  bookingStartDate: {
+    type: Date,
+    required: true
+  },
+  bookingEndDate: {
+    type: Date,
+    required: true
+  },
+  invoice: {
+    type: String,
+    required: true
+  },
+  itemId: {
+    _id: {
+      type: ObjectId,
+      ref: 'Item',
+      required: true
     },
-    bookingEndDate:{
-        type:Date,
-        required:true
+    title: {
+      type: String,
+      required: true
     },
-    itemId:[{
-        _id:{
-            type:ObjectId,
-            required:true,
-            ref:"Item"
-        },
-        price:{
-            type:Number,
-            required:true,
-        },
-        day:{
-            type:Number,
-            required:true,
-        }
-    }],
-    memberId:{
-        type:ObjectId,
-        ref:"Member"
+    price: {
+      type: Number,
+      required: true
     },
-    bankId:{
-        type:ObjectId,
-        ref:"Bank"
+    duration: {
+      type: Number,
+      required: true
+    }
+  },
+  total: {
+    type: Number,
+    required: true
+  },
+  memberId: {
+    type: ObjectId,
+    ref: 'Member'
+  },
+  bankId: {
+    type: ObjectId,
+    ref: 'Bank'
+  },
+  payments: {
+    proofPayment: {
+      type: String,
+      required: true
     },
-    proofPayment:{
-        type:String,
-        required:true
+    bankFrom: {
+      type: String,
+      required: true
     },
-    bankForm:{
-        type:String,
-        required:true
+    accountHolder: {
+      type: String,
+      required: true
     },
-    accountHolder:{
-        type:String,
-        required:true
-    },
+    status: {
+      type: String,
+      default: 'Proses'
+    }
+  }
 })
 
-module.exports=mongoose.model('Booking',BookingSchema)
+module.exports = mongoose.model('Booking', bookingSchema)

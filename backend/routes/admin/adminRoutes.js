@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const adminController=require('../../controllers/admin/adminController')
-const {upload}=require('../../middleware/multer')
+const {uploadSingle,uploadMultiple}=require('../../middleware/multer')
 router.get('/dashboard',adminController.viewDashboard)
 
 // Endpoint category
@@ -12,12 +12,16 @@ router.delete('/category/:id',adminController.deleteCategory)
 
 // Endpoint bank
 router.get('/bank',adminController.viewBank)
-router.post('/bank',upload,adminController.addBank)
-router.put('/bank',upload,adminController.editBank)
-router.delete('/bank/:id',upload,adminController.deleteBank)
+router.post('/bank',uploadSingle,adminController.addBank)
+router.put('/bank',uploadSingle,adminController.editBank)
+router.delete('/bank/:id',uploadSingle,adminController.deleteBank)
 
 //Endpoint Item
 router.get('/item',adminController.viewItem)
-router.get('/booking',adminController.viewBooking)
+router.post('/item',uploadMultiple,adminController.addItem)
+router.get('/item/show-image/:id', adminController.showImageItem);
+router.get('/item/:id', adminController.showEditItem);
+router.put('/item/:id', uploadMultiple, adminController.editItem);
+router.delete('/item/:id/delete', adminController.deleteItem);
 
 module.exports=router;
