@@ -18,9 +18,12 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <h1 class="h3 mb-4 text-gray-600">Welcome to bank</h1>
+
+                <%- include('../../partials/alert.ejs')  %>
+                <h1 class="h3 mb-4 text-gray-600">Welcome to bank </h1>
                 <!-- Page Heading -->
-               <%- include('view_tables.ejs') %>
+                <%- include('view_tables.ejs') %>
+                <%- include('add_modal.ejs')  %>
 
             </div>
             <!-- /.container-fluid -->
@@ -64,4 +67,21 @@
 </div>
 
 <%- include('../../partials/script.ejs')  %>
+<%- include('edit_modal.ejs')  %>
 <%- include('add_modal.ejs')  %>
+<script>
+    $('#dataTable').on('click', '.button-update', function () {
+        let id = $(this).data('id')
+        let name = $(this).data('name')
+        let nameBank = $(this).data('namebank')
+        let nomorRekening = $(this).data('nomorrekening')
+
+        console.log(id + name+nameBank+nomorRekening)
+        $('#edit_modal').modal("show");
+        $('#id').val(id)
+        $('#name').val(name)
+        $('#namebank').val(nameBank)
+        $('#nomorRekening').val(nomorRekening)
+
+    })
+</script>
