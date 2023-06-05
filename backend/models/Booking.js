@@ -31,6 +31,10 @@ const bookingSchema = new mongoose.Schema({
     duration: {
       type: Number,
       required: true
+    },
+    userId:{
+      type:ObjectId,
+      ref:'Users'
     }
   },
   total: {

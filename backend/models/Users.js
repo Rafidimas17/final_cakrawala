@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-
+const {ObjectId}=mongoose.Schema;
 const usersSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -10,6 +10,18 @@ const usersSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  itemId:[{
+    type:ObjectId,
+    ref:"Item"
+  }],
+  bankId:[{
+    type:ObjectId,
+    ref:"Bank"
+  }],
+  bookingId:[{
+    type:ObjectId,
+    ref:"Booking"
+  }],
 })
 
 usersSchema.pre('save', async function (next) {

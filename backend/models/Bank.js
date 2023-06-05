@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const {ObjectId}=mongoose.Schema;
 const bankSchema = new mongoose.Schema({
   nameBank: {
     type: String,
@@ -16,6 +16,10 @@ const bankSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true
+  },
+  usersId:{
+    type:ObjectId,
+    ref:"Users"
   }
 })
 

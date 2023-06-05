@@ -1063,15 +1063,29 @@ var data = [
     'documents': [
       {
         _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903345'),
-        username: 'admin',
-        password: 'rahasia',
+        username: 'semeru',
+        password: 'semeru',
+        itemId: [
+            { _id: mongoose.Types.ObjectId('5e96cbe292b97300fc902222') },],
+            role: 'admin'
+
       },
       {
         _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903346'),
-        username: 'superadmin',
-        password: 'rahasia',
-        role: 'admin'
+        username: 'merbabu',
+        password: 'merbabu',
+        itemId: [
+            { _id: mongoose.Types.ObjectId('5e96cbe292b97300fc902223') },],
+        role: 'pengelola'
+      },
+      {
+        _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903347'),
+        username: 'penanggungan',
+        password: 'penanggungan',
+        role: 'pengelola'
+       
       },
     ]
   }
 ];
+
