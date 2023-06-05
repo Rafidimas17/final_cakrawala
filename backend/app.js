@@ -13,9 +13,11 @@ mongoose.connect("mongodb://127.0.0.1:27017/db_cakrawala",{
   useFindAndModify: true,
   useUnifiedTopology: true
 })
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const adminRouter=require('./routes/admin/adminRoutes')
+const apiRouter=require('./routes/api/apiRoutes')
 
 const app = express();
 
@@ -41,6 +43,7 @@ app.use('/sb-admin-2',express.static(path.join(__dirname, 'node_modules/startboo
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin',adminRouter)
+app.use('/api-v1',apiRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
