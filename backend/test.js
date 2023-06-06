@@ -1,44 +1,26 @@
-import fetch from 'node-fetch'; // npm install crypto-js
-import CryptoJS from 'crypto-js'; // npm install node-fetch --save
 
-// adjust with your iPaymu api key & va 
-var apikey          = "QbGcoO0Qds9sQFDmY0MWg1Tq.xtuh1";
-var va              = "1179000899";
-var url             = 'https://sandbox.ipaymu.com/api/v2/payment/direct'; // development mode
-// var url             = 'https://my.ipaymu.com/api/v2/payment/direct'; // for production mode
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://bendosiap45:d8dP8UKiBJn6NBLC@cluster0.yzlgzli.mongodb.net/?retryWrites=true&w=majority";
 
-var body            = {
-    "name":"Putu",
-    "phone":"08123456789",
-    "email": "putu@gmail.com",
-    "amount": 10000,
-    "comments":"Payment to XYZ Store",
-    "notifyUrl":"https://your-website.com/callback-url", // your callback url
-    "referenceId":"1234", // your reference id or transaction id
-    "paymentMethod":"va",
-    "paymentChannel":"bca",
-} 
-// generate signature
-var bodyEncrypt     = CryptoJS.SHA256(JSON.stringify(body));
-var stringtosign    = "POST:"+va+":"+bodyEncrypt+":"+apikey;
-var signature       = CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(stringtosign, apikey));
-// request
-fetch(
-    url,
-    {
-        method: "POST",
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            va: va,
-            signature: signature,
-            timestamp: '20150201121045'
-        },
-        body: JSON.stringify(body)
-    }
-)
-.then((response) => response.json())
-.then((responseJson) => {
-    // response
-    console.log(responseJson)
-})
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
