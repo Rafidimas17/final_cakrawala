@@ -68,7 +68,7 @@ module.exports = {
           })
         } catch (error) {
           console.log(error);
-          res.status(500).json({ message: "Internal server error" });
+          res.status(404).json({ message: error });
         }
       },
       detailPage: async (req, res) => {
