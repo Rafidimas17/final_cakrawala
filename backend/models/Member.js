@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 
 const memberSchema = new mongoose.Schema({
-  firstName: {
+  nameMember: {
     type: String,
     required: true
   },
-  lastName: {
+  addressMember: {
     type: String,
     required: true
   },
-  email: {
-    type: String,
+  phoneMember: {
+    type: Number,
     required: true
   },
-  phoneNumber: {
-    type: String,
+  noIdMember: {
+    type: Number,
     required: true
   }
 })

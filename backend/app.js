@@ -7,9 +7,10 @@ const mongoose=require('mongoose')
 const methodOverride=require('method-override')
 const session=require('express-session')
 const flash=require('connect-flash')
+require('dotenv').config()
 try {
   
-  mongoose.connect("mongodb+srv://bendosiap45:d8dP8UKiBJn6NBLC@cluster0.yzlgzli.mongodb.net/?retryWrites=true&w=majority",{
+  mongoose.connect(process.env.MONGO_URL,{
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: true,
