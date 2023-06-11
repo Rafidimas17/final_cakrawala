@@ -30,10 +30,6 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  track: {
-    type: String,
-    required: true
-  },
   isPopular: {
     type: Boolean,
     default: false
@@ -69,7 +65,11 @@ const itemSchema = new mongoose.Schema({
   usersId:{
     type:ObjectId,
     ref:"Users"
-  }
+  },
+  trackId: [{
+    type: ObjectId,
+    ref: 'Track'
+  }],
 })
 
 module.exports = mongoose.model('Item', itemSchema)

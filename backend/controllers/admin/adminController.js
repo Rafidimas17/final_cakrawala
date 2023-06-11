@@ -2,6 +2,7 @@ const Category = require("../../models/Category");
 const Bank = require("../../models/Bank");
 const Item = require("../../models/Item");
 const Image = require("../../models/Image");
+const Track = require("../../models/Track");
 const Feature = require("../../models/Feature");
 const Activity = require("../../models/Activity");
 const Booking = require("../../models/Booking");
@@ -36,7 +37,7 @@ module.exports = {
       const { username, password } = req.body;
       const user = await Users.findOne({ username: username });
       const item = await Item.findOne({ _id: user.itemId });
-      console.log(item);
+      // console.log(item);
       if (!user) {
         req.flash("alertMessage", "User yang anda masukan tidak ada!!");
         req.flash("alertStatus", "danger");
@@ -248,6 +249,7 @@ module.exports = {
         .populate({ path: "imageId", select: "id imageUrl" })
         .populate({ path: "categoryId", select: "id name" });
       //  console.log(item)
+      const trackData=await Track.find()
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
@@ -257,6 +259,7 @@ module.exports = {
         category,
         alert,
         item,
+        trackData,
         action: "view",
         user: req.session.user,
       });
@@ -269,13 +272,13 @@ module.exports = {
 
   addItem: async (req, res) => {
     try {
-      const { categoryId, title, price, province,regency,district,villages, about, track } = req.body;
+      const { categoryId, title, price, province,regency,district,villages, about, trackName } = req.body;
       const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
       // console.log(province,regency,district,villages)
       
       const provinceResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`);
       const provinceName = provinceResponse.data.find(prov => prov.id === province).name.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
-      console.log(provinceName);
+      // console.log(provinceName);
       
       const regencyResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`);
       // console.log(regencyResponse);
@@ -295,9 +298,9 @@ module.exports = {
 
       if (req.files.length > 0) {
         const category = await Category.findOne({ _id: categoryId });
+
         const newItem = {
           categoryId,
-          track,
           title,
           description: about,
           price,
@@ -317,9 +320,19 @@ module.exports = {
         await category.save();
 
         // Tambahkan item ke array itemId pada user
-        const user = await Users.findOne({ _id: userId });
+        const user = await Users.findOne({ _id: userId }); 
         user.itemId.push(item._id);
         await user.save();
+
+        const track = await Track.create({
+          name: trackName,
+          itemId: item._id, // Ganti track dengan name sesuai definisi skema Track
+        });
+  
+        const trackers = await Item.findOne({ _id: item._id });
+        trackers.trackId.push(track._id); // Menambahkan ID track ke dalam array trackId di model Item
+        await trackers.save();
+
 
         for (let i = 0; i < req.files.length; i++) {
           const imageSave = await Image.create({

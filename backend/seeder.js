@@ -1,8 +1,9 @@
 var seeder = require('mongoose-seed');
 var mongoose = require('mongoose');
+require('dotenv').config()
 
 // Connect to MongoDB via Mongoose
-seeder.connect('mongodb+srv://bendosiap45:d8dP8UKiBJn6NBLC@', {
+seeder.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: true,
@@ -20,11 +21,12 @@ seeder.connect('mongodb+srv://bendosiap45:d8dP8UKiBJn6NBLC@', {
     './models/Image',
     './models/Member',
     './models/Booking',
-    './models/Users'
-  ]);
+    './models/Users',
+    './models/Track', // Add the Track model file path here
+  ]);;
 
   // Clear specified collections
-  seeder.clearModels(['Category', 'Bank', 'Item', 'Member', 'Item', 'Feature', 'Image', 'Booking', 'Users'], function () {
+  seeder.clearModels(['Category', 'Bank', 'Item', 'Member', 'Item', 'Feature', 'Image', 'Booking', 'Users','Track'], function () {
 
     // Callback to populate DB once collections have been cleared
     seeder.populateModels(data, function () {
@@ -87,6 +89,10 @@ var data = [
         isPopular: false,
         description: 'Minimal techno is a minimalist subgenre of techno music. It is characterized by a stripped-down aesthetic that exploits the use of repetition and understated development. Minimal techno is thought to have been originally developed in the early 1990s by Detroit-based producers Robert Hood and Daniel Bell.',
         unit: 'night',
+        track:[
+          {_id: mongoose.Types.ObjectId('5e96cbe292b97300fc903324')},
+          {_id: mongoose.Types.ObjectId('5e96cbe292b97300fc903325')}
+        ],
         imageId: [
           // done
           { _id: mongoose.Types.ObjectId('5e96cbe292b97300fc90cdb1') },
@@ -1055,6 +1061,20 @@ var data = [
         nomorRekening: '878678',
         name: 'elfin',
         imageUrl: 'images/logo mandiri.png'
+      }
+    ]
+  },
+   {
+    model: 'Track',
+    documents: [
+      {
+        
+        _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903324'),
+        name: 'Track 1'
+      },
+      {
+        _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903325'),
+        name: 'Track 2'
       }
     ]
   },
