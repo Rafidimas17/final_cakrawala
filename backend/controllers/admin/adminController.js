@@ -80,6 +80,7 @@ module.exports = {
         booking,
         item,
       });
+      // console.log()
     } catch (error) {
       res.redirect("/admin/dashboard");
     }

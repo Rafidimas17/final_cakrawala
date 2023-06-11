@@ -70,6 +70,10 @@ const itemSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Track'
   }],
+  memberId: [{
+    type: ObjectId,
+    ref: 'Member'
+  }],
 })
 
 module.exports = mongoose.model('Item', itemSchema)

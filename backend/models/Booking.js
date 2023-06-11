@@ -41,10 +41,10 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  memberId: {
+  memberId: [{
     type: ObjectId,
     ref: 'Member'
-  },
+  }],
   bankId: {
     type: ObjectId,
     ref: 'Bank'

@@ -6,9 +6,11 @@ const Bank = require("../../models/Bank");
 const Booking = require("../../models/Booking");
 const Member = require("../../models/Member");
 const axios = require("axios");
-
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 async function geoCode(address) {
-  const accessToken = "pk.eyJ1IjoiYWdyZWdhdG9yIiwiYSI6ImNsaXIwZmhxNTAwaDEzZ2xjYTZrNDdjdm0ifQ.N-EmT90hgdTuS5WnGZYXAQ";
+  const accessToken =
+    "pk.eyJ1IjoiYWdyZWdhdG9yIiwiYSI6ImNsaXIwZmhxNTAwaDEzZ2xjYTZrNDdjdm0ifQ.N-EmT90hgdTuS5WnGZYXAQ";
   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${accessToken}&limit=1`;
   const response = await axios.get(url);
   const coordinates = {
@@ -85,8 +87,6 @@ module.exports = {
     }
   },
 
-  
-
   detailPage: async (req, res) => {
     try {
       const { id } = req.params;
@@ -94,9 +94,9 @@ module.exports = {
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
         .populate({ path: "imageId", select: "_id imageUrl" });
-  
+
       const bank = await Bank.find();
-  
+
       const testimonial = {
         _id: "asd1293uasdads1",
         imageUrl: "images/testimonial1.jpg",
@@ -107,9 +107,9 @@ module.exports = {
         familyName: "Angga",
         familyOccupation: "Product Designer",
       };
-  
+
       // Add function to get current weather
-      const coordinates = await geoCode('Purwodadi');
+      const coordinates = await geoCode(item.village);
       const secret_weather = "ae97c50fef527dbd65b43f79e8e51ef1";
       const weatherUrl = `http://api.weatherstack.com/current?access_key=${secret_weather}&query=${coordinates.latitude},${coordinates.longitude}&units=m`;
       const weatherResponse = await axios.get(weatherUrl);
@@ -117,7 +117,7 @@ module.exports = {
         description: weatherResponse.data.current.weather_descriptions[0],
         temperature: weatherResponse.data.current.temperature,
       };
-  
+
       res.status(200).json({
         ...item._doc,
         bank,
@@ -128,15 +128,14 @@ module.exports = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-  
-  
+
   bookingPage: async (req, res) => {
     const {
       idItem,
       duration,
       startDateBooking,
       endDateBooking,
-      methodPayment,
+      // track,
       bankName,
       nameAccountBank,
       members,
@@ -148,10 +147,10 @@ module.exports = {
     await item.save();
 
     let total = item.price * duration;
-    let tax = total * 0.10;
+    let tax = total * 0.1;
 
     const invoice = Math.floor(1000000 + Math.random() * 9000000);
-    
+
     const memberData = [];
     for (const member of members) {
       const { nameMember, addressMember, noIdMember, phoneMember } = member;
@@ -161,35 +160,33 @@ module.exports = {
         noIdMember,
         phoneMember,
       });
+      console.log(memberData)
       memberData.push(newMember._id);
     }
-  
-    const data = {
-      invoice,
-      startDateBooking,
-      endDateBooking,
-      members: memberData,
-      bankName,
-      methodPayment,
-      nameAccountBank,
-      total: total += tax,
+    
+    const newBooking = {
+      invoice: invoice,
+      bookingStartDate: startDateBooking,
+      bookingEndDate: endDateBooking,
+      memberId: memberData,
+      bankId: "5e96cbe292b97300fc903333",
+      total: (total += tax),
       itemId: {
         _id: item.id,
         title: item.title,
         price: item.price,
-        duration: duration
+        duration: duration,
+      },
+      payments: {
+        proofPayment: "images/img.jpg",
+        bankFrom: bankName,
+        accountHolder: nameAccountBank,
       },
     };
-  
-    res.status(200).json({
-      message: "Berhasil",
-      payload: data,
-    });
-  }
-  
-  
-  
-  
-  
-  
+
+    const booking = await Booking.create(newBooking);
+    item.memberId.push(...memberData);
+    await item.save();
+    res.status(200).json({ message: "Success Booking", booking });
+  },
 };
