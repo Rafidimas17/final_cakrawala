@@ -142,6 +142,7 @@ module.exports = {
       members,
     } = req.body;
     const item = await Item.findOne({ _id: idItem });
+    // console.log(item)
     item.sumBooking += 1;
 
     await item.save();
