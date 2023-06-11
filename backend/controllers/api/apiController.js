@@ -5,6 +5,19 @@ const Category = require("../../models/Category");
 const Bank = require("../../models/Bank");
 const Booking = require("../../models/Booking");
 const Member = require("../../models/Member");
+const axios = require("axios");
+
+async function geoCode(address) {
+  const accessToken = "pk.eyJ1IjoiYWdyZWdhdG9yIiwiYSI6ImNsaXIwZmhxNTAwaDEzZ2xjYTZrNDdjdm0ifQ.N-EmT90hgdTuS5WnGZYXAQ";
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${accessToken}&limit=1`;
+  const response = await axios.get(url);
+  const coordinates = {
+    longitude: response.data.features[0].center[0],
+    latitude: response.data.features[0].center[1],
+  };
+
+  return coordinates;
+}
 
 module.exports = {
   viewLandingPage: async (req, res) => {
@@ -71,6 +84,9 @@ module.exports = {
       res.status(404).json({ message: error });
     }
   },
+
+  
+
   detailPage: async (req, res) => {
     try {
       const { id } = req.params;
@@ -78,9 +94,9 @@ module.exports = {
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
         .populate({ path: "imageId", select: "_id imageUrl" });
-
+  
       const bank = await Bank.find();
-
+  
       const testimonial = {
         _id: "asd1293uasdads1",
         imageUrl: "images/testimonial1.jpg",
@@ -91,16 +107,29 @@ module.exports = {
         familyName: "Angga",
         familyOccupation: "Product Designer",
       };
-
+  
+      // Add function to get current weather
+      const coordinates = await geoCode('Purwodadi');
+      const secret_weather = "ae97c50fef527dbd65b43f79e8e51ef1";
+      const weatherUrl = `http://api.weatherstack.com/current?access_key=${secret_weather}&query=${coordinates.latitude},${coordinates.longitude}&units=m`;
+      const weatherResponse = await axios.get(weatherUrl);
+      const currentWeather = {
+        description: weatherResponse.data.current.weather_descriptions[0],
+        temperature: weatherResponse.data.current.temperature,
+      };
+  
       res.status(200).json({
         ...item._doc,
         bank,
         testimonial,
+        currentWeather,
       });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
   },
+  
+  
   bookingPage: async (req, res) => {
     const {
       idItem,

@@ -14,7 +14,19 @@ const itemSchema = new mongoose.Schema({
     type: String,
     default: 'Indonesia'
   },
+  province: {
+    type: String,
+    required: true
+  },
   city: {
+    type: String,
+    required: true
+  },
+  district: {
+    type: String,
+    required: true
+  },
+  village: {
     type: String,
     required: true
   },

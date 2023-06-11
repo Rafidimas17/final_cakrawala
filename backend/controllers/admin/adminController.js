@@ -10,6 +10,7 @@ const Users = require("../../models/Users");
 const fs = require("fs-extra");
 const path = require("path");
 const bcrypt = require("bcryptjs");
+const axios=require('axios')
 
 module.exports = {
   viewSignin: async (req, res) => {
@@ -268,8 +269,29 @@ module.exports = {
 
   addItem: async (req, res) => {
     try {
-      const { categoryId, title, price, city, about, track } = req.body;
+      const { categoryId, title, price, province,regency,district,villages, about, track } = req.body;
       const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
+      // console.log(province,regency,district,villages)
+      
+      const provinceResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`);
+      const provinceName = provinceResponse.data.find(prov => prov.id === province).name.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
+      console.log(provinceName);
+      
+      const regencyResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`);
+      // console.log(regencyResponse);
+      const cityData = regencyResponse.data.find(regencies => regencies.id === regency);
+      const cityName = cityData.name.replace(/(KABUPATEN|kabupaten|KOTA|kota)\s*/g, '');
+      const nameCity=cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+      
+      const districtResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`);
+      const districtData = districtResponse.data.find(districts => districts.id === district);
+      const districtName = districtData.name.toUpperCase();
+      // console.log(districtName);
+      
+      const villageResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`);
+      const villageData = villageResponse.data.find(village => village.id === villages);
+      const villageName = villageData.name.toUpperCase();
+      // console.log(villageName);
 
       if (req.files.length > 0) {
         const category = await Category.findOne({ _id: categoryId });
@@ -279,7 +301,10 @@ module.exports = {
           title,
           description: about,
           price,
-          city,
+          province:provinceName,
+          district:districtName,
+          village:villageName,
+          city:nameCity,
         };
 
         // Tambahkan userId ke item baru
