@@ -246,6 +246,7 @@ module.exports = {
   viewItem: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
+      console.log(user)
       const item = await Item.find({ _id: user.itemId })
         .populate({ path: "imageId", select: "id imageUrl" })
         .populate({ path: "categoryId", select: "id name" });
@@ -262,6 +263,7 @@ module.exports = {
         item,
         trackData,
         action: "view",
+        titleName:user,
         user: req.session.user,
       });
     } catch (error) {
@@ -274,9 +276,14 @@ module.exports = {
   addItem: async (req, res) => {
     try {
       const { categoryId, title, price, province,regency,district,villages, about, trackName } = req.body;
-      const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
-      // console.log(province,regency,district,villages)
+      const userId = req.session.user.id; 
       
+      const itemFind=await Users.findOne({_id:userId})
+      console.log(itemFind.organizer)
+      // res.render("admin/item/view_item", {
+      //   itemFind: itemFind,
+      // });
+
       const provinceResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`);
       const provinceName = provinceResponse.data.find(prov => prov.id === province).name.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
       // console.log(provinceName);

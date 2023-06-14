@@ -18,6 +18,10 @@ const usersSchema = new mongoose.Schema({
     type:ObjectId,
     ref:"Item"
   }],
+  organizer:{
+    type:String,
+    required:true,
+  },
   bankId:[{
     type:ObjectId,
     ref:"Bank"

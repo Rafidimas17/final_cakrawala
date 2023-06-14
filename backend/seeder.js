@@ -1087,8 +1087,8 @@ var data = [
         password: 'semeru',
         itemId: [
             { _id: mongoose.Types.ObjectId('5e96cbe292b97300fc902222') },],
-            role: 'admin'
-
+        role: 'admin',
+        organizer: 'Gunung Semeru'
       },
       {
         _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903346'),
@@ -1096,14 +1096,16 @@ var data = [
         password: 'merbabu',
         itemId: [
             { _id: mongoose.Types.ObjectId('5e96cbe292b97300fc902223') },],
-        role: 'pengelola'
+        role: 'pengelola',
+        organizer: 'Gunung Merbabu'
+      
       },
       {
         _id: mongoose.Types.ObjectId('5e96cbe292b97300fc903347'),
         username: 'penanggungan',
         password: 'penanggungan',
-        role: 'pengelola'
-       
+        role: 'pengelola',
+        organizer: 'Gunung Penanggungan'
       },
     ]
   }

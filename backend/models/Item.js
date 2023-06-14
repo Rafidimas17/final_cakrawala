@@ -18,18 +18,18 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  city: {
+  city: [{
     type: String,
     required: true
-  },
-  district: {
+  }],
+  district: [{
     type: String,
     required: true
-  },
-  village: {
+  }],
+  village: [{
     type: String,
     required: true
-  },
+  }],
   isPopular: {
     type: Boolean,
     default: false
