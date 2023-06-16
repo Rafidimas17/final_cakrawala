@@ -277,7 +277,6 @@ module.exports = {
         alert,
         item,
         action: "view",
-        titleName: user,
         user,
       });
       console.log(item.trackId);
