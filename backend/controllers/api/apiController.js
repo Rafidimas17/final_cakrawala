@@ -89,7 +89,7 @@ module.exports = {
 
   detailPage: async (req, res) => {
     try {
-      const { id } = req.params;
+    
       const item = await Item.findOne({ _id: id })
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
