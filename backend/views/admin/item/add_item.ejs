@@ -7,21 +7,14 @@
           <input type="text" class="form-control" name="title" placeholder="<%= titleName.organizer %>" value="<%= titleName.organizer %>" readonly>
         </div>
         <div class="form-group">
-          <label for="name">Price</label>
-          <input type="number" class="form-control" name="price" placeholder="Enter price" required>
+          <label for="name">Harga</label>
+          <input type="number" class="form-control" name="price" placeholder="Masukan Harga" required>
+        </div>
+        <div class="form-group">
+          <label for="name">Ketinggian</label>
+          <input type="number" class="form-control" name="highest" placeholder="Masukan Ketinggian" required>
         </div>
         
-        <!-- <div class="form-group">
-          <label for="name">City</label>
-          <input type="text" class="form-control" name="city" placeholder="Enter city" required>
-        </div> -->
-        <div class="form-group">
-          <label for="name">Track</label>
-          <input type="text" class="form-control" name="trackName" placeholder="Enter track" required>
-        </div>
-        <div class="form-group">
-          <%- include('../../partials/dropdown-address.ejs')  %>
-        </div>
         <div class="form-group">
           <label for="name">Category</label>
           <select class="form-control" name="categoryId">

@@ -6,26 +6,27 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  priceId: [{
-    type: ObjectId,
-    ref:"Price"
-  }],
+  price: {
+    type: Number,
+   required:true
+  },
   country: {
     type: String,
     default: 'Indonesia'
   },
-  addressId:[{
-    type:ObjectId,
-    ref:"Address"
-  }],
+  highest:{
+    type:Number,
+    required:true
+  },
+  
   isPopular: {
     type: Boolean,
     default: false
   },
-  descriptionId: [{
-    type: ObjectId,
-    ref: "Description"
-  }],
+  description: {
+    type: String,
+    required:true
+  },
   unit: {
     type: String,
     default: 'day'
@@ -65,6 +66,10 @@ const itemSchema = new mongoose.Schema({
   detailId: [{
     type: ObjectId,
     ref: 'DetailItem'
+  }],
+  bankId:[{
+    type:ObjectId,
+    ref:"Bank"
   }]
 })
 itemSchema.pre('findOneAndDelete', async function (next) {

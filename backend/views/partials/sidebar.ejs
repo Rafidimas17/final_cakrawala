@@ -43,15 +43,19 @@
 
   <% if (user.role === 'pengelola') { %>
     <li class="nav-item">
+      <a class="nav-link" href="/admin/item">
+        <i class="fas fa-fw fa-hotel"></i>
+        <span>General</span></a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link" href="/admin/bank">
         <i class="fas fa-fw fa-money-check"></i>
         <span>Bank</span></a>
     </li>
-  
     <li class="nav-item">
-      <a class="nav-link" href="/admin/item">
-        <i class="fas fa-fw fa-hotel"></i>
-        <span>Item</span></a>
+      <a class="nav-link" href="/admin/track">
+        <i class="fas fa-fw fa-route"></i>
+        <span>Track</span></a>
     </li>
     <!-- Heading -->
     <div class="sidebar-heading">

@@ -9,8 +9,7 @@ router.use(auth);
 router.get('/logout', adminController.actionLogout);
 router.get('/dashboard', adminController.viewDashboard);
 //endpoint pengelola
-router.get('/pengelola',adminController.viewPengelola)
-router.post('/pengelola', adminController.addPengelola);
+
 
 // endpoint category
 router.get('/category', adminController.viewCategory);
@@ -29,6 +28,13 @@ router.get('/item/show-image/:id', adminController.showImageItem);
 router.get('/item/:id', adminController.showEditItem);
 router.put('/item/:id', uploadMultiple, adminController.editItem);
 router.delete('/item/:id/delete', adminController.deleteItem);
+
+//endpoint track
+router.get('/track',adminController.viewTrack)
+router.post('/track', adminController.addTrack);
+router.delete('/track/:id', adminController.deleteTrack);
+
+
 
 // endpoint detail item
 router.get('/item/show-detail-item/:itemId', adminController.viewDetailItem);

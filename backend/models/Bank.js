@@ -13,14 +13,11 @@ const bankSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  imageUrl: {
-    type: String,
-    required: true
-  },
-  usersId:{
+  itemId:{
     type:ObjectId,
-    ref:"Users"
-  }
+    ref:"Item"
+  },
+ 
 })
 
 module.exports = mongoose.model('Bank', bankSchema)

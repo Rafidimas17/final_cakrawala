@@ -12,10 +12,9 @@ const fs = require("fs-extra");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
-const Address = require("../../models/Address");
-const Price = require("../../models/Price");
+
+
 const Description = require("../../models/Description");
-const DetailItem = require("../../models/DetailItem");
 
 module.exports = {
   viewSignin: async (req, res) => {
@@ -40,7 +39,7 @@ module.exports = {
     try {
       const { username, password } = req.body;
       const user = await Users.findOne({ username: username });
-      
+      const item = await Item.findOne({ _id: user.itemId });
       // console.log(item);
       if (!user) {
         req.flash("alertMessage", "User yang anda masukan tidak ada!!");
@@ -78,7 +77,7 @@ module.exports = {
       const item = await Item.find({ _id: user.itemId });
       const member = await Member.find();
       const booking = await Booking.find({ _id: user.bookingId });
-      
+
       res.render("admin/dashboard/view_dashboard", {
         title: "Cakrawala | Dashboard",
         user,
@@ -95,15 +94,14 @@ module.exports = {
   viewCategory: async (req, res) => {
     try {
       const category = await Category.find();
-      const user = await Users.findOne({ _id: req.session.user.id });
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
       res.render("admin/category/view_category", {
-        user,
         category,
         alert,
         title: "Cakrawala | Category",
+        user: req.session.user,
       });
     } catch (error) {
       res.redirect("/admin/category");
@@ -159,17 +157,18 @@ module.exports = {
   viewBank: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
-      const bank = await Bank.find({ _id: user.bankId });
-      console.log(bank);
+      const item = await Item.find({ _id: user.itemId });
+      const bank = await Bank.find({ itemId: item });
+      // console.log(bank);
+      // console.log(item)
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
       res.render("admin/bank/view_bank", {
         title: "Cakrawala | Bank",
         alert,
-        user,
         bank,
-       
+        user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -181,20 +180,24 @@ module.exports = {
   addBank: async (req, res) => {
     try {
       const { name, nameBank, nomorRekening } = req.body;
-      const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
+       const user = await Users.findOne({ _id: req.session.user.id });
+      // const userId = req.session.user.id; 
+      const item = await Item.findOne({ _id: user.itemId });
+      // const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
       const bankItem = {
         name,
         nameBank,
         nomorRekening,
-        imageUrl: `images/${req.file.filename}`,
+        itemId:item
       };
-      bankItem.userId = userId;
-
+     
       const bank = await Bank.create(bankItem);
 
-      const user = await Users.findOne({ _id: userId });
-      user.bankId.push(bank._id);
-      await user.save();
+      const itemBank=await Item.findOne({_id:item})
+      itemBank.bankId.push(bank._id)
+      await itemBank.save()
+
+
       req.flash("alertMessage", "Success Add Bank");
       req.flash("alertStatus", "success");
       res.redirect("/admin/bank");
@@ -254,21 +257,15 @@ module.exports = {
   viewItem: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
-      console.log(user.username)
+      // console.log(user)
       const item = await Item.find({ _id: user.itemId })
         .populate({ path: "imageId", select: "id imageUrl" })
         .populate({ path: "categoryId", select: "id name" });
       //  console.log(item)
+      // const trackData = await Track.find();
       
-      const trackData = await Track.find();
-      const addresses = await Address.find();
-      const price=await Price.find();
-      // const trackIdLength = ;
+   
      
-      // const tes=item[0].addressId
-      // console.log(tes)
-
-      // console.log(addresses.length); // Assuming item is the object you provided
 
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
@@ -278,15 +275,12 @@ module.exports = {
         title: "Cakrawala | Item",
         category,
         alert,
-        addresses,
         item,
-        price,
-        trackData,
         action: "view",
         titleName: user,
         user,
       });
-      
+      console.log(item.trackId);
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -300,139 +294,46 @@ module.exports = {
         categoryId,
         price,
         title,
-        province,
-        regency,
-        district,
-        villages,
         about,
-        trackName,
+        highest
       } = req.body;
-      
+
       const userId = req.session.user.id;
-      // const itemId = req.session.user.itemId;
-      const organizer = req.session.user.organizer;
-      // console.log(itemId)
+      const newItem = {
+        categoryId,
+        title,
+        price,
+        description:about,
+        highest,
+        userId:userId
+      };
+      
+      const item = await Item.create(newItem);
 
-      //  const itemId=userer;
 
-      const provinceResponse = await axios.get(
-        `https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`
-      );
-      const provinceName = provinceResponse.data
-        .find((prov) => prov.id === province)
-        .name.toLowerCase()
-        .replace(/\b\w/g, (match) => match.toUpperCase());
-      // console.log(provinceName);
+      const category = await Category.findOne({ _id: categoryId });
+      category.itemId.push(item._id);
+      await category.save();
 
-      const regencyResponse = await axios.get(
-        `https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`
-      );
-      // console.log(regencyResponse);
-      const cityData = regencyResponse.data.find(
-        (regencies) => regencies.id === regency
-      );
-      const cityName = cityData.name.replace(
-        /(KABUPATEN|kabupaten|KOTA|kota)\s*/g,
-        ""
-      );
-      const nameCity =
-        cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+      // Tambahkan item ke array itemId pada user
+      const user = await Users.findOne({ _id: userId });
+      user.itemId.push(item._id);
+      await user.save();
 
-      const districtResponse = await axios.get(
-        `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`
-      );
-      const districtData = districtResponse.data.find(
-        (districts) => districts.id === district
-      );
-      const districtName = districtData.name.toUpperCase();
-      // console.log(districtName);
 
-      const villageResponse = await axios.get(
-        `https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`
-      );
-      const villageData = villageResponse.data.find(
-        (village) => village.id === villages
-      );
-      const villageName = villageData.name.toUpperCase();
-      // console.log(villageName);
-       
-        const newItem = {
-          categoryId,
-          title,
-        };
-        // console.log(newItem)
-        // Tambahkan userId ke item baru
-        newItem.userId = userId;
-
-        const item = await Item.create(newItem);
-
-        const category = await Category.findOne({ _id: categoryId });
-        category.itemId.push(item._id);
-        await category.save();
-
-        // Tambahkan item ke array itemId pada user
-        const user = await Users.findOne({ _id: userId }); 
-        user.itemId.push(item._id);
-        await user.save();
-
-       
-
-        const harga = await Price.create({
-          price: price,
+      for (let i = 0; i < req.files.length; i++) {
+        const imageSave = await Image.create({
+          imageUrl: `images/${req.files[i].filename}`,
         });
-        const items = await Item.findOne({ _id: item._id });
-        items.priceId.push({ _id: harga._id });
-        await items.save();
-        // About
-        const desc = await Description.create({
-          description: about,
-        });
-        const itemDesc = await Item.findOne({ _id: item._id });
-        itemDesc.descriptionId.push({ _id: desc._id });
-        await itemDesc.save();
-
-        const address = await Address.create({
-          province: provinceName,
-          district: districtName,
-          village: villageName,
-          city: nameCity,
-          itemId: item._id,
-        });
-        const addressItem = await Item.findOne({ _id: item._id });
-        addressItem.addressId.push(address._id);
-        await addressItem.save();
-        const track = await Track.create({
-          name: trackName,
-          itemId: item._id, 
-          addressId:address._id// Ganti track dengan name sesuai definisi skema Track
-        });
-  
-        const trackers = await Item.findOne({ _id: item._id });
-        trackers.trackId.push(track._id); // Menambahkan ID track ke dalam array trackId di model Item
-        await trackers.save();
-
-        const itemDetail=await DetailItem.findOne({userId:userId})
-        itemDetail.itemId.push(item._id)
-        itemDetail.trackId.push(track._id)
-        itemDetail.categoryId.push(categoryId)
-        await itemDetail.save()
-        
-
-        for (let i = 0; i < req.files.length; i++) {
-          const imageSave = await Image.create({
-            imageUrl: `images/${req.files[i].filename}`,
-          });
-          item.imageId.push(imageSave._id);
-          await item.save();
-        
-
-        req.flash("alertMessage", "Success Add Item");
-        req.flash("alertStatus", "success");
-        res.redirect("/admin/item");
+        item.imageId.push(imageSave._id);
+        await item.save();
       }
-     
 
-     
+      req.flash("alertMessage", "Success Add Item");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/item");
+
+       
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -538,8 +439,6 @@ module.exports = {
     try {
       const { id } = req.params;
       const item = await Item.findOne({ _id: id }).populate("imageId");
-      
-     
       for (let i = 0; i < item.imageId.length; i++) {
         Image.findOne({ _id: item.imageId[i]._id })
           .then((image) => {
@@ -552,13 +451,7 @@ module.exports = {
             res.redirect("/admin/item");
           });
       }
-      await Item.deleteOne({ _id: id });
-      await DetailItem.updateMany(
-        { itemId: id },
-        { $pull: { itemId: id } }
-      );
-      // await itemDetail.save();
-      // await item.remove();
+      await item.remove();
       req.flash("alertMessage", "Success delete Item");
       req.flash("alertStatus", "success");
       res.redirect("/admin/item");
@@ -764,7 +657,7 @@ module.exports = {
 
       res.render("admin/booking/view_booking", {
         title: "Cakrawala | Booking",
-        user,
+        user: req.session.user,
         booking,
       });
     } catch (error) {
@@ -821,53 +714,118 @@ module.exports = {
       res.redirect(`/admin/booking/${id}`);
     }
   },
-
-
-  viewPengelola: async (req, res) => {
+  viewTrack: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
-      const users=await Users.find()
+      const item = await Item.findOne({ _id: user.itemId });
+      const track = await Track.find({ itemId: item });
+
+      // console.log(item)
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
-      res.render("admin/pengelola/view_pengelola", {
-        user,
-        users,
+      res.render("admin/track/view_track", {
+        title: "Cakrawala | Track",
         alert,
-        title: "Cakrawala | Pengelola",
+        track,
+        user,
       });
-    } catch (error) {
-      res.redirect("/admin/pengelola/view_pengelola");
-    }
-  },
-
-  addPengelola:async (req,res)=>{
-    try {
-      const { username,namaGunung,password,noTelepon,alamat } = req.body;
-      // console.log(name);
-      const newPengelola={
-        username:username,
-        password:password,
-        role:"Pengelola",
-        organizer:namaGunung,
-        noPhone:noTelepon,
-        address:alamat
-      }
-      const pengelola=await Users.create(newPengelola);
-      
-      await DetailItem.create({
-        userId:pengelola._id
-      })
-
-      req.flash("alertMessage", "Berhasil Menambahkan Pengelola");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/pengelola");
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
-      res.redirect("/admin/pengelola");
+      res.redirect("/admin/bank");
     }
-  } 
+  },
+  addTrack:async(req,res)=>{
+    try{
+      const {province,
+        regency,
+        district,
+        villages,
+        track,
+      }=req.body;
+      const user = await Users.findOne({ _id: req.session.user.id });
+      const item = await Item.findOne({ _id: user.itemId });
+      const provinceResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`
+      );
+      const provinceName = provinceResponse.data
+        .find((prov) => prov.id === province)
+        .name.toLowerCase()
+        .replace(/\b\w/g, (match) => match.toUpperCase());
+      // console.log(provinceName);
 
+      const regencyResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`
+      );
+      // console.log(regencyResponse);
+      const cityData = regencyResponse.data.find(
+        (regencies) => regencies.id === regency
+      );
+      const cityName = cityData.name.replace(
+        /(KABUPATEN|kabupaten|KOTA|kota)\s*/g,
+        ""
+      );
+      const nameCity =
+        cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+       
 
+      const districtResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`
+      );
+      const districtData = districtResponse.data.find(
+        (districts) => districts.id === district
+      );
+      const districtName =  districtData.name.charAt(0).toUpperCase() + districtData.name.slice(1).toLowerCase();
+      // console.log(districtName);
+
+      const villageResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`
+      );
+      const villageData = villageResponse.data.find(
+        (village) => village.id === villages
+      );
+      const villageName = villageData.name.charAt(0).toUpperCase() + villageData.name.slice(1).toLowerCase();
+      const trackSave={
+          name:track,
+          province: provinceName,
+          district: districtName,
+          village: villageName,
+          city: nameCity,
+          itemId:item,
+      }
+      const trackItem=await Track.create(trackSave)
+      const trackers = await Item.findOne({ _id: item });
+      trackers.trackId.push(trackItem._id); // Menambahkan ID track ke dalam array trackId di model Item
+      await trackers.save();
+      req.flash("alertMessage", "Success Add Track");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/track");
+      // console.log(villageName);
+    }catch(error){
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/track");
+    }
+  },
+  deleteTrack:async(req,res)=>{
+    try {
+      const { id } = req.params;
+      await Track.deleteOne({ _id: id });
+      await Item.updateMany(
+        { trackId: id },
+        { $pull: { trackId: id } }
+      );
+      // await itemDetail.save();
+      // await item.remove();
+      req.flash("alertMessage", "Success delete Item");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/track");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/track");
+    }
+    
+  }
 };

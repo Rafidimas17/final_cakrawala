@@ -7,11 +7,10 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Title</th>
-              <th>Price</th>
-              <th>Country</th>
-              <th>Track</th>
-              <th>City</th>
+              <th>Nama</th>
+              <th>Harga</th>
+              <th>Negara</th>
+              <th>Ketinggian</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -20,26 +19,11 @@
 
             <tr>
               <td><%= i + 1 %></td>
-              <td><%= titleName.organizer %></td>
-              <td>
-                <% for(let j = 0; j < item[i].priceId.length; j++) { %>
-                <% const prices = price.find(t => t._id.toString() === item[i].priceId[j].toString()) %>
-                Rp.<%= prices ? prices.price : '' %><br>
-                <% } %>
-              </td>
+              <td><%= item[i].title %></td>
+              <td><%= item[i].price %></td>
               <td><%= item[i].country %></td>
-              <td>
-                <% for(let j = 0; j < item[i].trackId.length; j++) { %>
-                <% const track = trackData.find(t => t._id.toString() === item[i].trackId[j].toString()) %>
-                <%= track ? track.name : '' %><br>
-                <% } %>
-              </td>
-              <td>
-                <% for(let j = 0; j < item[i].addressId.length; j++) { %>
-                  <% const addressItem = addresses.find(t => t._id.toString() === item[i].addressId[j].toString()) %>
-                  <%= addressItem ? addressItem.city : '' %><br>
-                <% } %>
-              </td>
+              <td><%= item[i].highest %></td>
+              
               
               <td>
                 <form action="/admin/item/<%= item[i]._id %>/delete?_method=DELETE" method="POST">
