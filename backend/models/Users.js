@@ -18,6 +18,14 @@ const usersSchema = new mongoose.Schema({
     type:ObjectId,
     ref:"Item"
   }],
+  noPhone:{
+    type:Number,
+    required:true,
+  },
+  address:{
+    type:String,
+    required:true,
+  },
   organizer:{
     type:String,
     required:true,

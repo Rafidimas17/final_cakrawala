@@ -11,7 +11,11 @@ const Users = require("../../models/Users");
 const fs = require("fs-extra");
 const path = require("path");
 const bcrypt = require("bcryptjs");
-const axios=require('axios')
+const axios = require("axios");
+const Address = require("../../models/Address");
+const Price = require("../../models/Price");
+const Description = require("../../models/Description");
+const DetailItem = require("../../models/DetailItem");
 
 module.exports = {
   viewSignin: async (req, res) => {
@@ -36,7 +40,7 @@ module.exports = {
     try {
       const { username, password } = req.body;
       const user = await Users.findOne({ username: username });
-      const item = await Item.findOne({ _id: user.itemId });
+      
       // console.log(item);
       if (!user) {
         req.flash("alertMessage", "User yang anda masukan tidak ada!!");
@@ -53,6 +57,8 @@ module.exports = {
       req.session.user = {
         id: user.id,
         username: user.username,
+        itemId: user.itemId,
+        organizer: user.organizer,
       };
 
       res.redirect("/admin/dashboard");
@@ -89,14 +95,15 @@ module.exports = {
   viewCategory: async (req, res) => {
     try {
       const category = await Category.find();
+      const user = await Users.findOne({ _id: req.session.user.id });
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
       res.render("admin/category/view_category", {
+        user,
         category,
         alert,
         title: "Cakrawala | Category",
-        user: req.session.user,
       });
     } catch (error) {
       res.redirect("/admin/category");
@@ -160,8 +167,9 @@ module.exports = {
       res.render("admin/bank/view_bank", {
         title: "Cakrawala | Bank",
         alert,
+        user,
         bank,
-        user: req.session.user,
+       
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -246,12 +254,22 @@ module.exports = {
   viewItem: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
-      console.log(user)
+      console.log(user.username)
       const item = await Item.find({ _id: user.itemId })
         .populate({ path: "imageId", select: "id imageUrl" })
         .populate({ path: "categoryId", select: "id name" });
       //  console.log(item)
-      const trackData=await Track.find()
+      
+      const trackData = await Track.find();
+      const addresses = await Address.find();
+      const price=await Price.find();
+      // const trackIdLength = ;
+     
+      // const tes=item[0].addressId
+      // console.log(tes)
+
+      // console.log(addresses.length); // Assuming item is the object you provided
+
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
@@ -260,12 +278,15 @@ module.exports = {
         title: "Cakrawala | Item",
         category,
         alert,
+        addresses,
         item,
+        price,
         trackData,
         action: "view",
-        titleName:user,
-        user: req.session.user,
+        titleName: user,
+        user,
       });
+      
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -275,55 +296,77 @@ module.exports = {
 
   addItem: async (req, res) => {
     try {
-      const { categoryId, title, price, province,regency,district,villages, about, trackName } = req.body;
-      const userId = req.session.user.id; 
+      const {
+        categoryId,
+        price,
+        title,
+        province,
+        regency,
+        district,
+        villages,
+        about,
+        trackName,
+      } = req.body;
       
-      const itemFind=await Users.findOne({_id:userId})
-      console.log(itemFind.organizer)
-      // res.render("admin/item/view_item", {
-      //   itemFind: itemFind,
-      // });
+      const userId = req.session.user.id;
+      // const itemId = req.session.user.itemId;
+      const organizer = req.session.user.organizer;
+      // console.log(itemId)
 
-      const provinceResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`);
-      const provinceName = provinceResponse.data.find(prov => prov.id === province).name.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
+      //  const itemId=userer;
+
+      const provinceResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json`
+      );
+      const provinceName = provinceResponse.data
+        .find((prov) => prov.id === province)
+        .name.toLowerCase()
+        .replace(/\b\w/g, (match) => match.toUpperCase());
       // console.log(provinceName);
-      
-      const regencyResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`);
+
+      const regencyResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${province}.json`
+      );
       // console.log(regencyResponse);
-      const cityData = regencyResponse.data.find(regencies => regencies.id === regency);
-      const cityName = cityData.name.replace(/(KABUPATEN|kabupaten|KOTA|kota)\s*/g, '');
-      const nameCity=cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
-      
-      const districtResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`);
-      const districtData = districtResponse.data.find(districts => districts.id === district);
+      const cityData = regencyResponse.data.find(
+        (regencies) => regencies.id === regency
+      );
+      const cityName = cityData.name.replace(
+        /(KABUPATEN|kabupaten|KOTA|kota)\s*/g,
+        ""
+      );
+      const nameCity =
+        cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+
+      const districtResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`
+      );
+      const districtData = districtResponse.data.find(
+        (districts) => districts.id === district
+      );
       const districtName = districtData.name.toUpperCase();
       // console.log(districtName);
-      
-      const villageResponse = await axios.get(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`);
-      const villageData = villageResponse.data.find(village => village.id === villages);
+
+      const villageResponse = await axios.get(
+        `https://www.emsifa.com/api-wilayah-indonesia/api/villages/${district}.json`
+      );
+      const villageData = villageResponse.data.find(
+        (village) => village.id === villages
+      );
       const villageName = villageData.name.toUpperCase();
       // console.log(villageName);
-
-      if (req.files.length > 0) {
-        const category = await Category.findOne({ _id: categoryId });
-
+       
         const newItem = {
           categoryId,
           title,
-          description: about,
-          price,
-          province:provinceName,
-          district:districtName,
-          village:villageName,
-          city:nameCity,
         };
-
+        // console.log(newItem)
         // Tambahkan userId ke item baru
         newItem.userId = userId;
 
         const item = await Item.create(newItem);
 
-        // Tambahkan item ke array itemId pada category
+        const category = await Category.findOne({ _id: categoryId });
         category.itemId.push(item._id);
         await category.save();
 
@@ -332,15 +375,48 @@ module.exports = {
         user.itemId.push(item._id);
         await user.save();
 
+       
+
+        const harga = await Price.create({
+          price: price,
+        });
+        const items = await Item.findOne({ _id: item._id });
+        items.priceId.push({ _id: harga._id });
+        await items.save();
+        // About
+        const desc = await Description.create({
+          description: about,
+        });
+        const itemDesc = await Item.findOne({ _id: item._id });
+        itemDesc.descriptionId.push({ _id: desc._id });
+        await itemDesc.save();
+
+        const address = await Address.create({
+          province: provinceName,
+          district: districtName,
+          village: villageName,
+          city: nameCity,
+          itemId: item._id,
+        });
+        const addressItem = await Item.findOne({ _id: item._id });
+        addressItem.addressId.push(address._id);
+        await addressItem.save();
         const track = await Track.create({
           name: trackName,
-          itemId: item._id, // Ganti track dengan name sesuai definisi skema Track
+          itemId: item._id, 
+          addressId:address._id// Ganti track dengan name sesuai definisi skema Track
         });
   
         const trackers = await Item.findOne({ _id: item._id });
         trackers.trackId.push(track._id); // Menambahkan ID track ke dalam array trackId di model Item
         await trackers.save();
 
+        const itemDetail=await DetailItem.findOne({userId:userId})
+        itemDetail.itemId.push(item._id)
+        itemDetail.trackId.push(track._id)
+        itemDetail.categoryId.push(categoryId)
+        await itemDetail.save()
+        
 
         for (let i = 0; i < req.files.length; i++) {
           const imageSave = await Image.create({
@@ -348,12 +424,15 @@ module.exports = {
           });
           item.imageId.push(imageSave._id);
           await item.save();
-        }
+        
 
         req.flash("alertMessage", "Success Add Item");
         req.flash("alertStatus", "success");
         res.redirect("/admin/item");
       }
+     
+
+     
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -459,6 +538,8 @@ module.exports = {
     try {
       const { id } = req.params;
       const item = await Item.findOne({ _id: id }).populate("imageId");
+      
+     
       for (let i = 0; i < item.imageId.length; i++) {
         Image.findOne({ _id: item.imageId[i]._id })
           .then((image) => {
@@ -471,7 +552,13 @@ module.exports = {
             res.redirect("/admin/item");
           });
       }
-      await item.remove();
+      await Item.deleteOne({ _id: id });
+      await DetailItem.updateMany(
+        { itemId: id },
+        { $pull: { itemId: id } }
+      );
+      // await itemDetail.save();
+      // await item.remove();
       req.flash("alertMessage", "Success delete Item");
       req.flash("alertStatus", "success");
       res.redirect("/admin/item");
@@ -670,14 +757,14 @@ module.exports = {
 
   viewBooking: async (req, res) => {
     try {
-        const user = await Users.findOne({ _id: req.session.user.id });
-        const booking = await Booking.find({ _id: user.bookingId })
+      const user = await Users.findOne({ _id: req.session.user.id });
+      const booking = await Booking.find({ _id: user.bookingId })
         .populate("memberId")
         .populate("bankId");
 
       res.render("admin/booking/view_booking", {
         title: "Cakrawala | Booking",
-        user: req.session.user,
+        user,
         booking,
       });
     } catch (error) {
@@ -734,4 +821,53 @@ module.exports = {
       res.redirect(`/admin/booking/${id}`);
     }
   },
+
+
+  viewPengelola: async (req, res) => {
+    try {
+      const user = await Users.findOne({ _id: req.session.user.id });
+      const users=await Users.find()
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      res.render("admin/pengelola/view_pengelola", {
+        user,
+        users,
+        alert,
+        title: "Cakrawala | Pengelola",
+      });
+    } catch (error) {
+      res.redirect("/admin/pengelola/view_pengelola");
+    }
+  },
+
+  addPengelola:async (req,res)=>{
+    try {
+      const { username,namaGunung,password,noTelepon,alamat } = req.body;
+      // console.log(name);
+      const newPengelola={
+        username:username,
+        password:password,
+        role:"Pengelola",
+        organizer:namaGunung,
+        noPhone:noTelepon,
+        address:alamat
+      }
+      const pengelola=await Users.create(newPengelola);
+      
+      await DetailItem.create({
+        userId:pengelola._id
+      })
+
+      req.flash("alertMessage", "Berhasil Menambahkan Pengelola");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/pengelola");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/pengelola");
+    }
+  } 
+
+
 };

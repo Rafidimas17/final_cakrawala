@@ -8,6 +8,10 @@ router.post('/signin', adminController.actionSignin);
 router.use(auth);
 router.get('/logout', adminController.actionLogout);
 router.get('/dashboard', adminController.viewDashboard);
+//endpoint pengelola
+router.get('/pengelola',adminController.viewPengelola)
+router.post('/pengelola', adminController.addPengelola);
+
 // endpoint category
 router.get('/category', adminController.viewCategory);
 router.post('/category', adminController.addCategory);

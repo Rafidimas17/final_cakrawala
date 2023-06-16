@@ -17,19 +17,30 @@
           </thead>
           <tbody>
             <% for(let i = 0; i < item.length; i++){ %>
-              
-              <tr>
+
+            <tr>
               <td><%= i + 1 %></td>
               <td><%= titleName.organizer %></td>
-              <td>Rp <%= item[i].price %></td>
+              <td>
+                <% for(let j = 0; j < item[i].priceId.length; j++) { %>
+                <% const prices = price.find(t => t._id.toString() === item[i].priceId[j].toString()) %>
+                Rp.<%= prices ? prices.price : '' %><br>
+                <% } %>
+              </td>
               <td><%= item[i].country %></td>
               <td>
                 <% for(let j = 0; j < item[i].trackId.length; j++) { %>
-                  <% const track = trackData.find(t => t._id.toString() === item[i].trackId[j].toString()) %>
-                  <%= track ? track.name : '' %><br>
+                <% const track = trackData.find(t => t._id.toString() === item[i].trackId[j].toString()) %>
+                <%= track ? track.name : '' %><br>
                 <% } %>
               </td>
-              <td><%= item[i].city %></td>
+              <td>
+                <% for(let j = 0; j < item[i].addressId.length; j++) { %>
+                  <% const addressItem = addresses.find(t => t._id.toString() === item[i].addressId[j].toString()) %>
+                  <%= addressItem ? addressItem.city : '' %><br>
+                <% } %>
+              </td>
+              
               <td>
                 <form action="/admin/item/<%= item[i]._id %>/delete?_method=DELETE" method="POST">
                   <a href="/admin/item/show-image/<%= item[i].id %>" class="btn btn-info btn-circle btn-sm"><i

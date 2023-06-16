@@ -6,50 +6,38 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  price: {
-    type: Number,
-    required: true
-  },
+  priceId: [{
+    type: ObjectId,
+    ref:"Price"
+  }],
   country: {
     type: String,
     default: 'Indonesia'
   },
-  province: {
-    type: String,
-    required: true
-  },
-  city: [{
-    type: String,
-    required: true
-  }],
-  district: [{
-    type: String,
-    required: true
-  }],
-  village: [{
-    type: String,
-    required: true
+  addressId:[{
+    type:ObjectId,
+    ref:"Address"
   }],
   isPopular: {
     type: Boolean,
     default: false
   },
-  description: {
-    type: String,
-    required: true
-  },
+  descriptionId: [{
+    type: ObjectId,
+    ref: "Description"
+  }],
   unit: {
     type: String,
-    default: 'night'
+    default: 'day'
   },
   sumBooking: {
     type: Number,
     default: 0
   },
-  categoryId: {
+  categoryId: [{
     type: ObjectId,
     ref: 'Category'
-  },
+  }],
   imageId: [{
     type: ObjectId,
     ref: 'Image'
@@ -74,6 +62,25 @@ const itemSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Member'
   }],
+  detailId: [{
+    type: ObjectId,
+    ref: 'DetailItem'
+  }]
 })
+itemSchema.pre('findOneAndDelete', async function (next) {
+  const item = this;
+
+  try {
+    // Hapus ID dari DetailItem
+    await mongoose.model('DetailItem').updateMany(
+      { itemId: { $in: item._id } },
+      { $pull: { itemId: item._id } }
+    );
+    
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = mongoose.model('Item', itemSchema)

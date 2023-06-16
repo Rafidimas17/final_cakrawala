@@ -9,6 +9,10 @@ const trackSchema=mongoose.Schema({
     itemId: {
         type: ObjectId,
         ref: 'Item'
-      }
+      },
+    addressId:{
+        type:ObjectId,
+        ref:"Address"
+    }
 })
 module.exports=mongoose.model('Track',trackSchema)
