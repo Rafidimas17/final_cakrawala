@@ -20,4 +20,20 @@ const bankSchema = new mongoose.Schema({
  
 })
 
+bankSchema.pre('findOneAndDelete', async function (next) {
+  const bank = this;
+
+  try {
+    // Hapus ID dari DetailItem
+    await mongoose.model('Item').updateMany(
+      { bankId: { $in: bank._id } },
+      { $pull: { bankId: bank._id } }
+    );
+    
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = mongoose.model('Bank', bankSchema)

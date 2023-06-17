@@ -33,8 +33,12 @@ router.delete('/item/:id/delete', adminController.deleteItem);
 router.get('/track',adminController.viewTrack)
 router.post('/track', adminController.addTrack);
 router.delete('/track/:id', adminController.deleteTrack);
+router.put('/track', adminController.editTrack);
 
 
+//endpoint pengelola
+router.get('/pengelola',adminController.viewPengelola)
+router.post('/pengelola',adminController.addPengelola)
 
 // endpoint detail item
 router.get('/item/show-detail-item/:itemId', adminController.viewDetailItem);
@@ -46,7 +50,7 @@ router.post('/item/add/activity', uploadSingle, adminController.addActivity);
 router.put('/item/update/activity', uploadSingle, adminController.editActivity);
 router.delete('/item/:itemId/activity/:id', adminController.deleteActivity);
 
-
+//endpoint booking
 router.get('/booking', adminController.viewBooking);
 router.get('/booking/:id', adminController.showDetailBooking);
 router.put('/booking/:id/confirmation', adminController.actionConfirmation);

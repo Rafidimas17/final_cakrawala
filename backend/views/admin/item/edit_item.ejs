@@ -13,18 +13,13 @@
             required>
         </div>
         <div class="form-group">
-          <label for="name">City</label>
-          <input type="text" class="form-control" name="city" value="<%= item.city %>" placeholder="Enter city"
-            required>
-        </div>
-        <div class="form-group">
-          <label for="name">Track</label>
-          <input type="text" class="form-control" name="track" value="<%= item.track %>" placeholder="Enter track" required>
+          <label for="name">Ketinggian</label>
+          <input type="text" class="form-control" name="highest" value="<%= item.highest %>" placeholder="Enter track" required>
         </div>
         <div class="form-group">
           <label for="name">Category</label>
           <select class="form-control" name="categoryId">
-            <option value="<%= item.categoryId._id %>">--- <%= item.categoryId.name %> ---</option>
+            <option value="<%= item.categoryId[0]._id %>">--- <%= item.categoryId[0].name %> ---</option>
             <% for(let i = 0; i< category.length; i++){ %>
             <option value="<%= category[i].id %>"><%= category[i].name %></option>
             <%}%>

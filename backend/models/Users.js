@@ -22,6 +22,15 @@ const usersSchema = new mongoose.Schema({
     type:String,
     required:true,
   },
+  noPhone:{
+    type:Number,
+    required:true
+  },
+  address:{
+    type:String,
+    required:true
+  },
+ 
   bookingId:[{
     type:ObjectId,
     ref:"Booking"

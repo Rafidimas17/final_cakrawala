@@ -58,34 +58,19 @@ var data = [
     model: "Category",
     documents: [
       {
-        _id: mongoose.Types.ObjectId("5e96cbe292b97300fc901111"),
+        _id: mongoose.Types.ObjectId("7c14d6ddaa964a95a646b98a"),
         name: "Houses with beauty backyard",
-        itemId: [
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902222") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902223") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902224") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902225") },
-        ],
+        itemId: [],
       },
       {
-        _id: mongoose.Types.ObjectId("5e96cbe292b97300fc901112"),
+        _id: mongoose.Types.ObjectId("60982fc1e3c1623a15b30c57"),
         name: "Hotels with large living room",
-        itemId: [
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902226") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902227") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902228") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902229") },
-        ],
+        itemId: [],
       },
       {
-        _id: mongoose.Types.ObjectId("5e96cbe292b97300fc901113"),
+        _id: mongoose.Types.ObjectId("60982fc1e3c1623a15b30c5f"),
         name: "Apartment with kitchen",
-        itemId: [
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902230") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902231") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902232") },
-          { _id: mongoose.Types.ObjectId("5e96cbe292b97300fc902233") },
-        ],
+        itemId: [],
       },
     ],
   },

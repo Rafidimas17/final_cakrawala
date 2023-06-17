@@ -4,22 +4,45 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Update Category</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Edit Track</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="/admin/category?_method=PUT" method="POST">
+      <form action="/admin/track?_method=PUT" method="POST">
         <div class="modal-body">
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control name" name="name" placeholder="Enter name" required>
+            <input type="text" class="form-control track" name="track" placeholder="Enter name" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="name">Provinsi</label>
+            <input type="text" class="form-control province" name="province" placeholder="Enter name" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="regencyDropdown">Kabupaten</label>
+              <!-- <label for="name">Name</label> -->
+            <input type="text" class="form-control city" name="city" placeholder="Enter name" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="districtDropdown">Kecamatan</label>
+              <!-- <label for="name">Name</label> -->
+              <input type="text" class="form-control district" name="district" placeholder="Enter name" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="villageDropdown">Kelurahan</label>
+              <!-- <label for="name">Name</label> -->
+              <input type="text" class="form-control village" name="village" placeholder="Enter name" required>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
           <input type="hidden" class="id" name="id">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary">Tambah</button>
         </div>
       </form>
     </div>

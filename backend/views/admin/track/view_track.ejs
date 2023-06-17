@@ -68,9 +68,17 @@
 <script>
   $('#dataTable').on('click', '.button-update', function () {
     let id = $(this).data('id');
-    let name = $(this).data('name');
+    let track = $(this).data('track');
+    let province = $(this).data('province');
+    let city = $(this).data('city');
+    let district = $(this).data('district');
+    let village = $(this).data('village');
     $('#edit-modal').modal('show');
     $('.id').val(id);
-    $('.name').val(name);
+    $('.track').val(track);
+    $('.province').val(province);
+    $('.city').val(city);
+    $('.district').val(district);
+    $('.village').val(village);
   })
 </script>
