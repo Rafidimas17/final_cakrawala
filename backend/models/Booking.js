@@ -14,6 +14,10 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  track:{
+    type:String,
+    required:true,
+  },
   itemId: {
     _id: {
       type: ObjectId,

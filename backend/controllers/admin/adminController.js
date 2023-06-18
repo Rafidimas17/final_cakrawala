@@ -891,6 +891,9 @@ module.exports = {
       req.flash("alertStatus", "danger");
       res.redirect("/admin/pengelola");
     }
+  },
+  viewExample:async(req,res)=>{
+    res.render("admin/example/view_example")
   }
   
 
