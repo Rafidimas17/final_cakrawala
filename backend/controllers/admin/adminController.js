@@ -13,7 +13,6 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 
-
 const Description = require("../../models/Description");
 
 module.exports = {
@@ -76,10 +75,20 @@ module.exports = {
       const user = await Users.findOne({ _id: req.session.user.id });
       const item = await Item.find({ _id: user.itemId });
       const member = await Member.find();
+      // console.log(item)
       const booking = await Booking.find({ _id: user.bookingId });
+      const steps = [
+        { label: "Step 1" },
+        { label: "Step 2" },
+        { label: "Step 3" },
+      ];
+
+      const currentStep = 1;
 
       res.render("admin/dashboard/view_dashboard", {
         title: "Cakrawala | Dashboard",
+        steps,
+        currentStep,
         user,
         member,
         booking,
@@ -180,23 +189,22 @@ module.exports = {
   addBank: async (req, res) => {
     try {
       const { name, nameBank, nomorRekening } = req.body;
-       const user = await Users.findOne({ _id: req.session.user.id });
-      // const userId = req.session.user.id; 
+      const user = await Users.findOne({ _id: req.session.user.id });
+      // const userId = req.session.user.id;
       const item = await Item.findOne({ _id: user.itemId });
       // const userId = req.session.user.id; // Ubah req.session.user.id menjadi userId
       const bankItem = {
         name,
         nameBank,
         nomorRekening,
-        itemId:item
+        itemId: item,
       };
-     
+
       const bank = await Bank.create(bankItem);
 
-      const itemBank=await Item.findOne({_id:item})
-      itemBank.bankId.push(bank._id)
-      await itemBank.save()
-
+      const itemBank = await Item.findOne({ _id: item });
+      itemBank.bankId.push(bank._id);
+      await itemBank.save();
 
       req.flash("alertMessage", "Success Add Bank");
       req.flash("alertStatus", "success");
@@ -212,17 +220,16 @@ module.exports = {
     try {
       const { id, name, nameBank, nomorRekening } = req.body;
       const bank = await Bank.findOne({ _id: id });
-     
-        bank.name = name;
-        bank.nameBank = nameBank;
-        bank.nomorRekening = nomorRekening;
-       
-        await bank.save();
-        req.flash("alertMessage", "Success Update Bank");
-        req.flash("alertStatus", "success");
-        res.redirect("/admin/bank");
-      }
-    catch (error) {
+
+      bank.name = name;
+      bank.nameBank = nameBank;
+      bank.nomorRekening = nomorRekening;
+
+      await bank.save();
+      req.flash("alertMessage", "Success Update Bank");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/bank");
+    } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/bank");
@@ -233,10 +240,7 @@ module.exports = {
     try {
       const { id } = req.params;
       await Bank.deleteOne({ _id: id });
-      await Item.updateMany(
-        { bankId: id },
-        { $pull: { bankId: id } }
-      );
+      await Item.updateMany({ bankId: id }, { $pull: { bankId: id } });
       req.flash("alertMessage", "Success Delete Bank");
       req.flash("alertStatus", "success");
       res.redirect("/admin/bank");
@@ -256,9 +260,6 @@ module.exports = {
         .populate({ path: "categoryId", select: "id name" });
       //  console.log(item)
       // const trackData = await Track.find();
-      
-   
-     
 
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
@@ -274,7 +275,7 @@ module.exports = {
       });
       // console.log(item.trackId);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/item");
@@ -283,26 +284,19 @@ module.exports = {
 
   addItem: async (req, res) => {
     try {
-      const {
-        categoryId,
-        price,
-        title,
-        about,
-        highest
-      } = req.body;
+      const { categoryId, price, title, about, highest } = req.body;
 
       const userId = req.session.user.id;
       const newItem = {
         categoryId,
         title,
         price,
-        description:about,
+        description: about,
         highest,
-        userId:userId
+        userId: userId,
       };
-      
-      const item = await Item.create(newItem);
 
+      const item = await Item.create(newItem);
 
       const category = await Category.findOne({ _id: categoryId });
       category.itemId.push(item._id);
@@ -312,7 +306,6 @@ module.exports = {
       const user = await Users.findOne({ _id: userId });
       user.itemId.push(item._id);
       await user.save();
-
 
       for (let i = 0; i < req.files.length; i++) {
         const imageSave = await Image.create({
@@ -325,8 +318,6 @@ module.exports = {
       req.flash("alertMessage", "Success Add Item");
       req.flash("alertStatus", "success");
       res.redirect("/admin/item");
-
-       
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -390,7 +381,7 @@ module.exports = {
   editItem: async (req, res) => {
     try {
       const { id } = req.params;
-     
+
       const { categoryId, title, price, about, highest } = req.body;
       const item = await Item.findOne({ _id: id })
         .populate({ path: "imageId", select: "id imageUrl" })
@@ -405,7 +396,7 @@ module.exports = {
         }
         item.title = title;
         item.price = price;
-        
+
         item.highest = highest;
         item.description = about;
         item.categoryId = categoryId;
@@ -417,7 +408,7 @@ module.exports = {
         item.title = title;
         item.price = price;
         item.highest = highest;
-       
+
         item.description = about;
         item.categoryId = categoryId;
         await item.save();
@@ -426,7 +417,7 @@ module.exports = {
         res.redirect("/admin/item");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/item");
@@ -656,7 +647,7 @@ module.exports = {
 
       res.render("admin/booking/view_booking", {
         title: "Cakrawala | Booking",
-        user: req.session.user,
+        user,
         booking,
       });
     } catch (error) {
@@ -666,6 +657,7 @@ module.exports = {
 
   showDetailBooking: async (req, res) => {
     const { id } = req.params;
+    const user = await Users.findOne({ _id: req.session.user.id });
     try {
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
@@ -677,7 +669,7 @@ module.exports = {
 
       res.render("admin/booking/show_detail_booking", {
         title: "Cakrawala | Detail Booking",
-        user: req.session.user,
+        user,
         booking,
         alert,
       });
@@ -735,14 +727,9 @@ module.exports = {
       res.redirect("/admin/bank");
     }
   },
-  addTrack:async(req,res)=>{
-    try{
-      const {province,
-        regency,
-        district,
-        villages,
-        track,
-      }=req.body;
+  addTrack: async (req, res) => {
+    try {
+      const { province, regency, district, villages, track } = req.body;
       const user = await Users.findOne({ _id: req.session.user.id });
       const item = await Item.findOne({ _id: user.itemId });
       const provinceResponse = await axios.get(
@@ -767,7 +754,6 @@ module.exports = {
       );
       const nameCity =
         cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
-       
 
       const districtResponse = await axios.get(
         `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regency}.json`
@@ -775,7 +761,9 @@ module.exports = {
       const districtData = districtResponse.data.find(
         (districts) => districts.id === district
       );
-      const districtName =  districtData.name.charAt(0).toUpperCase() + districtData.name.slice(1).toLowerCase();
+      const districtName =
+        districtData.name.charAt(0).toUpperCase() +
+        districtData.name.slice(1).toLowerCase();
       // console.log(districtName);
 
       const villageResponse = await axios.get(
@@ -784,16 +772,18 @@ module.exports = {
       const villageData = villageResponse.data.find(
         (village) => village.id === villages
       );
-      const villageName = villageData.name.charAt(0).toUpperCase() + villageData.name.slice(1).toLowerCase();
-      const trackSave={
-          name:track,
-          province: provinceName,
-          district: districtName,
-          village: villageName,
-          city: nameCity,
-          itemId:item,
-      }
-      const trackItem=await Track.create(trackSave)
+      const villageName =
+        villageData.name.charAt(0).toUpperCase() +
+        villageData.name.slice(1).toLowerCase();
+      const trackSave = {
+        name: track,
+        province: provinceName,
+        district: districtName,
+        village: villageName,
+        city: nameCity,
+        itemId: item,
+      };
+      const trackItem = await Track.create(trackSave);
       const trackers = await Item.findOne({ _id: item });
       trackers.trackId.push(trackItem._id); // Menambahkan ID track ke dalam array trackId di model Item
       await trackers.save();
@@ -801,21 +791,18 @@ module.exports = {
       req.flash("alertStatus", "success");
       res.redirect("/admin/track");
       // console.log(villageName);
-    }catch(error){
+    } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/track");
     }
   },
-  deleteTrack:async(req,res)=>{
+  deleteTrack: async (req, res) => {
     try {
       const { id } = req.params;
       await Track.deleteOne({ _id: id });
-      await Item.updateMany(
-        { trackId: id },
-        { $pull: { trackId: id } }
-      );
-      
+      await Item.updateMany({ trackId: id }, { $pull: { trackId: id } });
+
       req.flash("alertMessage", "Success delete Item");
       req.flash("alertStatus", "success");
       res.redirect("/admin/track");
@@ -824,34 +811,32 @@ module.exports = {
       req.flash("alertStatus", "danger");
       res.redirect("/admin/track");
     }
-    
   },
-  editTrack:async(req,res)=>{
+  editTrack: async (req, res) => {
     try {
-      const { id, track, province, city,district,village } = req.body;
+      const { id, track, province, city, district, village } = req.body;
       const tracks = await Track.findOne({ _id: id });
-     
-        tracks.name = track;
-        tracks.province = province;
-        tracks.city = city;
-        tracks.district =district;
-        tracks.village = village;
-       
-        await tracks.save();
-        req.flash("alertMessage", "Success Update Track");
-        req.flash("alertStatus", "success");
-        res.redirect("/admin/track");
-      }
-    catch (error) {
+
+      tracks.name = track;
+      tracks.province = province;
+      tracks.city = city;
+      tracks.district = district;
+      tracks.village = village;
+
+      await tracks.save();
+      req.flash("alertMessage", "Success Update Track");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/track");
+    } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/track");
     }
   },
-  viewPengelola:async(req,res)=>{
+  viewPengelola: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
-      const users=await Users.find()
+      const users = await Users.find();
       // const item = await Item.findOne({ _id: user.itemId });
       // const track = await Track.find({ itemId: item });
 
@@ -871,18 +856,19 @@ module.exports = {
       res.redirect("/admin/pengelola");
     }
   },
-  addPengelola:async(req,res)=>{
-    try{
-      const {username,password,namaGunung,noTelepon,alamat}=req.body
-      const addUser={
-        username:username,
-        password,password,
-        organizer:namaGunung,
-        role:"pengelola",
-        noPhone:noTelepon,
-        address:alamat
-      }
-      await Users.create(addUser)
+  addPengelola: async (req, res) => {
+    try {
+      const { username, password, namaGunung, noTelepon, alamat } = req.body;
+      const addUser = {
+        username: username,
+        password,
+        password,
+        organizer: namaGunung,
+        role: "pengelola",
+        noPhone: noTelepon,
+        address: alamat,
+      };
+      await Users.create(addUser);
       req.flash("alertMessage", "Sukses Tambah Pengelola");
       req.flash("alertStatus", "success");
       res.redirect("/admin/pengelola");
@@ -892,9 +878,30 @@ module.exports = {
       res.redirect("/admin/pengelola");
     }
   },
-  viewExample:async(req,res)=>{
-    res.render("admin/example/view_example")
-  }
-  
+  viewExample: async (req, res) => {
+    res.render("admin/example/view_example");
+  },
+  viewStatus: async (req, res) => {
+    try {
+      const user = await Users.findOne({ _id: req.session.user.id });
 
+      // const item = await Item.findOne({ _id: user.itemId });
+      // const track = await Track.find({ itemId: item });
+
+      // console.log(item)
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      res.render("admin/status/view_status", {
+        title: "Cakrawala | Status",
+        alert,
+
+        user,
+      });
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/pengelola");
+    }
+  },
 };

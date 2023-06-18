@@ -22,10 +22,10 @@ async function geoCode(address) {
   return coordinates;
 }
 async function generateInvoice() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const length = 10; // Panjang invoice yang diinginkan
 
-  let invoice = '';
+  let invoice = "";
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
     invoice += characters.charAt(randomIndex);
@@ -102,7 +102,7 @@ module.exports = {
 
   detailPage: async (req, res) => {
     try {
-      const {id}=req.params
+      const { id } = req.params;
       const item = await Item.findOne({ _id: id })
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
@@ -111,7 +111,7 @@ module.exports = {
         .populate({ path: "bankId", select: "_id name" });
 
       // const bank = await Bank.find();
-     const address=item.trackId[0].name;
+      const address = item.trackId[0].name;
       const testimonial = {
         _id: "asd1293uasdads1",
         imageUrl: "images/testimonial1.jpg",
@@ -132,11 +132,11 @@ module.exports = {
         description: weatherResponse.data.current.weather_descriptions[0],
         temperature: weatherResponse.data.current.temperature,
       };
-      const data={
+      const data = {
         ...item._doc,
         testimonial,
         currentWeather,
-      }
+      };
       // console.log(data)
       res.status(200).json(data);
     } catch (error) {
@@ -154,20 +154,40 @@ module.exports = {
       nameAccountBank,
       members,
     } = req.body;
+    if (!req.file) {
+      return res.status(401).json({ message: "Image Not Found" });
+    }
+    if (
+      idItem === undefined ||
+      duration === undefined ||
+      startDateBooking === undefined ||
+      endDateBooking === undefined ||
+      bankName === undefined ||
+      nameAccountBank === undefined ||
+      nameMember === undefined ||
+      addressMember === undefined ||
+      noIdMember === undefined ||
+      phoneMember === undefined
+    ) {
+      res.status(402).json({ message: "Lengkapi semua field" });
+    }
     const item = await Item.findOne({ _id: idItem });
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
     // const tracks=item.trackId[0].name;
     // console.log(item)
     item.sumBooking += 1;
 
     await item.save();
-    const idTrack=item.trackId[0]._id
-    const findTrack=await Track.findOne({_id:idTrack})
-    const trackName=findTrack.name
+    const idTrack = item.trackId[0]._id;
+    const findTrack = await Track.findOne({ _id: idTrack });
+    const trackName = findTrack.name;
     // console.log(trackName)
     let total = item.price * duration;
     let tax = total * 0.1;
 
-   const invoice=await  generateInvoice()
+    const invoice = await generateInvoice();
 
     const memberData = [];
     for (const member of members) {
@@ -181,15 +201,14 @@ module.exports = {
       // console.log(memberData)
       memberData.push(newMember._id);
     }
-    
+
     const newBooking = {
-      invoice:invoice, 
+      invoice: invoice,
       bookingStartDate: startDateBooking,
       bookingEndDate: endDateBooking,
       memberId: memberData,
-      bankId: "5e96cbe292b97300fc903333",
       total: (total += tax),
-      track:trackName,
+      track: trackName,
       itemId: {
         _id: item._id,
         title: item.title,
@@ -197,7 +216,7 @@ module.exports = {
         duration: duration,
       },
       payments: {
-        proofPayment: "images/img.jpg",
+        proofPayment: `images/${req.file.filename}`,
         bankFrom: bankName,
         accountHolder: nameAccountBank,
       },
@@ -208,5 +227,4 @@ module.exports = {
     await item.save();
     res.status(200).json({ message: "Success Booking", booking });
   },
- 
 };
