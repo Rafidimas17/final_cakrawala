@@ -7,6 +7,7 @@ const Booking = require("../../models/Booking");
 const Member = require("../../models/Member");
 const axios = require("axios");
 const mongoose = require("mongoose");
+const Track = require("../../models/Track");
 
 async function geoCode(address) {
   const accessToken =
@@ -19,6 +20,18 @@ async function geoCode(address) {
   };
 
   return coordinates;
+}
+async function generateInvoice() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const length = 10; // Panjang invoice yang diinginkan
+
+  let invoice = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    invoice += characters.charAt(randomIndex);
+  }
+
+  return invoice;
 }
 
 module.exports = {
@@ -89,14 +102,16 @@ module.exports = {
 
   detailPage: async (req, res) => {
     try {
-    
+      const {id}=req.params
       const item = await Item.findOne({ _id: id })
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
-        .populate({ path: "imageId", select: "_id imageUrl" });
+        .populate({ path: "imageId", select: "_id imageUrl" })
+        .populate({ path: "trackId", select: "_id name" })
+        .populate({ path: "bankId", select: "_id name" });
 
-      const bank = await Bank.find();
-
+      // const bank = await Bank.find();
+     const address=item.trackId[0].name;
       const testimonial = {
         _id: "asd1293uasdads1",
         imageUrl: "images/testimonial1.jpg",
@@ -109,7 +124,7 @@ module.exports = {
       };
 
       // Add function to get current weather
-      const coordinates = await geoCode(item.village);
+      const coordinates = await geoCode(address);
       const secret_weather = "ae97c50fef527dbd65b43f79e8e51ef1";
       const weatherUrl = `http://api.weatherstack.com/current?access_key=${secret_weather}&query=${coordinates.latitude},${coordinates.longitude}&units=m`;
       const weatherResponse = await axios.get(weatherUrl);
@@ -117,15 +132,15 @@ module.exports = {
         description: weatherResponse.data.current.weather_descriptions[0],
         temperature: weatherResponse.data.current.temperature,
       };
-
-      res.status(200).json({
+      const data={
         ...item._doc,
-        bank,
         testimonial,
         currentWeather,
-      });
+      }
+      // console.log(data)
+      res.status(200).json(data);
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json(error.message);
     }
   },
 
@@ -135,21 +150,24 @@ module.exports = {
       duration,
       startDateBooking,
       endDateBooking,
-      // track,
       bankName,
       nameAccountBank,
       members,
     } = req.body;
     const item = await Item.findOne({ _id: idItem });
+    // const tracks=item.trackId[0].name;
     // console.log(item)
     item.sumBooking += 1;
 
     await item.save();
-
+    const idTrack=item.trackId[0]._id
+    const findTrack=await Track.findOne({_id:idTrack})
+    const trackName=findTrack.name
+    // console.log(trackName)
     let total = item.price * duration;
     let tax = total * 0.1;
 
-    const invoice = Math.floor(1000000 + Math.random() * 9000000);
+   const invoice=await  generateInvoice()
 
     const memberData = [];
     for (const member of members) {
@@ -160,19 +178,20 @@ module.exports = {
         noIdMember,
         phoneMember,
       });
-      console.log(memberData)
+      // console.log(memberData)
       memberData.push(newMember._id);
     }
     
     const newBooking = {
-      invoice: invoice,
+      invoice:invoice, 
       bookingStartDate: startDateBooking,
       bookingEndDate: endDateBooking,
       memberId: memberData,
       bankId: "5e96cbe292b97300fc903333",
       total: (total += tax),
+      track:trackName,
       itemId: {
-        _id: item.id,
+        _id: item._id,
         title: item.title,
         price: item.price,
         duration: duration,
@@ -189,4 +208,5 @@ module.exports = {
     await item.save();
     res.status(200).json({ message: "Success Booking", booking });
   },
+ 
 };
