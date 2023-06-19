@@ -884,6 +884,9 @@ module.exports = {
   viewStatus: async (req, res) => {
     try {
       const user = await Users.findOne({ _id: req.session.user.id });
+      const booking = await Booking.find({ _id: user.bookingId })
+      
+      // const user = await Users.findOne({ _id: req.session.user.id });
 
       // const item = await Item.findOne({ _id: user.itemId });
       // const track = await Track.find({ itemId: item });
@@ -895,13 +898,38 @@ module.exports = {
       res.render("admin/status/view_status", {
         title: "Cakrawala | Status",
         alert,
-
         user,
+        booking
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
       res.redirect("/admin/pengelola");
+    }
+  },
+  viewDetailStatus: async (req, res) => {
+    const { bookingId } = req.params;
+    try {
+      const alertMessage = req.flash("alertMessage");
+      const user = await Users.findOne({ _id: req.session.user.id });
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      const booking=await Booking.findOne({bookingId:bookingId})
+      // const feature = await Feature.find({ itemId: itemId });
+      // const  = await Activity.find({ itemId: itemId });
+
+      res.render("/admin/status/show-detail-status/show_detail_status", {
+        title: "Cakrawala | Detail Status",
+        alert,
+        booking,
+        // feature,
+        // activity,
+        user,
+      });
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect(`/admin/status/show-detail-status/${bookingId}`);
     }
   },
 };

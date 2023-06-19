@@ -57,6 +57,7 @@ router.put('/booking/:id/confirmation', adminController.actionConfirmation);
 router.put('/booking/:id/reject', adminController.actionReject);
 
 router.get('/status',adminController.viewStatus)
+router.get('/status/show-detail-status/:bookingId', adminController.viewDetailStatus);
 
 
 
