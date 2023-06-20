@@ -4,7 +4,8 @@ import { InputText } from "../../elements/Form";
 import ReservationSummary from "./ReservationSummary";
 import "./booking.scss";
 export default function BookingInformation(props) {
-  const { data} = props;
+  const { data, ItemDetails, checkout } = props;
+  console.log(ItemDetails);
 
   return (
     <Fade>
@@ -176,7 +177,7 @@ export default function BookingInformation(props) {
               );
             })}
           </div>
-          <ReservationSummary />
+          <ReservationSummary checkout={checkout} ItemDetails={ItemDetails}/>
         </div>
       </div>
     </Fade>

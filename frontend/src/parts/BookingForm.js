@@ -13,6 +13,8 @@ class BookingForm extends Component {
     this.state = {
       data: {
         duration: 1,
+        track: "",
+        nameMountain:"",
         date: {
           startDate: new Date(),
           endDate: new Date(),
@@ -69,7 +71,11 @@ class BookingForm extends Component {
     const { data } = this.state;
     this.props.startBooking({
       _id: this.props.itemDetails._id,
+      name:this.props.itemDetails.name,
       duration: data.duration,
+      price:this.props.itemDetails.price,
+      track: data.track,
+      nameMountin:data.name,
       date: {
         startDate: data.date.startDate,
         endDate: data.date.endDate,
@@ -86,7 +92,7 @@ class BookingForm extends Component {
       <div className="card bordered" style={{ padding: "20px 40px" }}>
         <h4 className="mb-3">Start Booking</h4>
         <h5 className="h2 mb-4" style={{ color: "#6ECCAF" }}>
-          ${itemDetails.price}{" "}
+          Rp{itemDetails.price}{" "}
           <span className="text-gray-500 font-weight-light">
             per {itemDetails.unit}
           </span>
@@ -95,7 +101,7 @@ class BookingForm extends Component {
         <label htmlFor="duration">How long you will stay?</label>
         <InputNumber
           max={30}
-          suffix={" night"}
+          suffix={" day"}
           isSuffixPlural
           onChange={this.updateData}
           name="duration"
@@ -105,10 +111,11 @@ class BookingForm extends Component {
         <label htmlFor="date">Pick a date</label>
         <InputDate onChange={this.updateData} name="date" value={data.date} />
         <label htmlFor="date">Choose Track</label>
-        <Form.Select className="select">
+        <Form.Select className="select" name="track" onChange={this.updateData} value={data.track} required>
+        <option value={null} required>--Pilih Track--</option>
           {itemDetails.track.map((street, index) => {
             return (
-              <option key={`street-${index}`} value="1">
+              <option key={`street-Rp{index}`} value={street.nameTrack}>
                 {street.nameTrack}
               </option>
             );
@@ -116,11 +123,10 @@ class BookingForm extends Component {
         </Form.Select>
         <h6
           className="text-gray-700 mt-3"
-          style={{ marginBottom: 30, fontWeight: 370, fontFamily: "Poppins" }}
-        >
+          style={{ marginBottom: 30, fontWeight: 370, fontFamily: "Poppins" }}>
           You will pay{" "}
           <span className="text-gray-900" style={{ fontWeight: 600 }}>
-            ${itemDetails.price * data.duration} USD
+            Rp{itemDetails.price * data.duration} 
           </span>{" "}
           per{" "}
           <span className="text-gray-900" style={{ fontWeight: 600 }}>
@@ -133,10 +139,10 @@ class BookingForm extends Component {
           hasShadow
           isPrimary
           isBlock
-          onClick={this.startBooking}
-        >
+          onClick={this.startBooking}>
           Continue to Book
         </Button>
+       
       </div>
     );
   }

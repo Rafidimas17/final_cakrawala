@@ -20,7 +20,7 @@
         <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
         <!-- Content Row -->
         <div class="row">
-        
+
           <!-- Earnings (Monthly) Card Example -->
           <div class="col-xl-4 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
@@ -28,7 +28,8 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Member</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= item && item[0] && item[0].memberId ? item[0].memberId.length : 0 %></div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                      <%= item && item[0] && item[0].memberId ? item[0].memberId.length : 0 %></div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -47,16 +48,17 @@
                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Dompet</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                       <% if (item && item[0] && item[0].memberId) { %>
-                        <%
-                        var memberCount = item[0].memberId.length; 
+                      <%
+                        var memberCount = item[0].memberId.length;
+                        var totalPrice = 0; // Inisialisasi total harga
                         booking.forEach(function(booking) {
-                          var price = booking.itemId.price; 
-                          var totalPrice = memberCount *price;
+                          var price = booking.itemId.price;
+                          totalPrice += memberCount * price;
                         %>
-                        <%= totalPrice %>
-                        <% }); %>
+                      <%= totalPrice %>
+                      <% }); %>
                       <% } else { %>
-                        0
+                      0
                       <% } %>
                     </div>
                   </div>

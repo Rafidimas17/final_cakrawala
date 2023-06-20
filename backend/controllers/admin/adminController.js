@@ -918,7 +918,7 @@ module.exports = {
       // const feature = await Feature.find({ itemId: itemId });
       // const  = await Activity.find({ itemId: itemId });
 
-      res.render("/admin/status/show-detail-status/show_detail_status", {
+      res.render("admin/status/detail-status/view_detail_status", {
         title: "Cakrawala | Detail Status",
         alert,
         booking,

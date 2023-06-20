@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Weather() {
+export default function Weather({data}) {
   return (
     <section className="container">
       <div
@@ -14,7 +14,7 @@ export default function Weather() {
           borderRadius: 8,
         }}
       >
-        Weather
+       {data.weather.value}{" "} {data.weather.unit}
       </div>
     </section>
   );

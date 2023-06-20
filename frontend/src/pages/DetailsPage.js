@@ -1,4 +1,5 @@
 import Header from "../parts/Header";
+import { connect } from "react-redux";
 import React, { Component } from "react";
 import itemDetails from "../json/itemDetails.json";
 import PageDetailTitle from "../parts/PageDetailTitle";
@@ -9,7 +10,9 @@ import Footer from "../parts/Footer";
 import BookingForm from "../parts/BookingForm";
 import Categories from "../parts/Categories";
 import Testimony from "../parts/Testimony";
-export default class DetailsPage extends Component {
+import { checkoutBooking } from "../store/actions/Checkout";
+// import { fetchPage } from "./store/actions/page";
+class DetailsPage extends Component {
   componentDidMount() {
     window.title = "Details Page";
     window.scrollTo(0, 0);
@@ -23,7 +26,7 @@ export default class DetailsPage extends Component {
       <>
         <Header {...this.props}></Header>
         <PageDetailTitle breadcrumb={breadcrumb} data={itemDetails} />
-        <Weather />
+        <Weather  data={itemDetails}/>
         <FeaturedImage data={itemDetails.imageUrls} />
         <section className="container">
           <div className="row">
@@ -31,7 +34,7 @@ export default class DetailsPage extends Component {
               <PageDetailDescription data={itemDetails} />
             </div>
             <div className="col-5">
-              <BookingForm itemDetails={itemDetails} />
+              <BookingForm itemDetails={itemDetails} startBooking={this.props.checkoutBooking} />
             </div>
           </div>
         </section>
@@ -43,3 +46,8 @@ export default class DetailsPage extends Component {
     );
   }
 }
+// const mapStateToProps = (state) => ({
+//   page: state.page,
+// });
+
+export default connect(null,{checkoutBooking})(DetailsPage);
