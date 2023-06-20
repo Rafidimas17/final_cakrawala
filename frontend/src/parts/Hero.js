@@ -73,7 +73,7 @@ export default function Hero(props) {
                   width="48"
                   height="48"
                   src={IconMountain}
-                  alt={`${props.data.mountain} Mountain`}
+                  alt={`${props.data.treasures} Mountain`}
                 />
                 <h6
                   className="mt-3"
@@ -83,7 +83,7 @@ export default function Hero(props) {
                     fontWeight: 500,
                   }}
                 >
-                  {formatNumber(props.data.mountain)}{" "}
+                  {formatNumber(props.data.treasures)}{" "}
                   <span
                     className="text-gray-500 font-weight-light"
                     style={{
@@ -101,7 +101,7 @@ export default function Hero(props) {
                   width="48"
                   height="48"
                   src={IconHiker}
-                  alt={`${props.data.hiker} Hiker`}
+                  alt={`${props.data.travelers} Hiker`}
                 />
                 <h6
                   className="mt-3"
@@ -111,7 +111,7 @@ export default function Hero(props) {
                     fontWeight: 500,
                   }}
                 >
-                  {formatNumber(props.data.hiker)}{" "}
+                  {formatNumber(props.data.travelers)}{" "}
                   <span
                     className="text-gray-500 font-weight-light"
                     style={{

@@ -6,6 +6,7 @@ const logger = require('morgan');
 const mongoose=require('mongoose')
 const methodOverride=require('method-override')
 const session=require('express-session')
+const cors=require('cors')
 const flash=require('connect-flash')
 require('dotenv').config()
 try {
@@ -51,6 +52,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin',adminRouter)
 app.use('/api-v1',apiRouter)
+app.use(cors())
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
