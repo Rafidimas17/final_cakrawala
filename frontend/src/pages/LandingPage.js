@@ -16,17 +16,9 @@ class LandingPage extends Component {
     document.title = "Cakrawala | Home";
     window.scrollTo(0, 0);
 
-    if (!this.props.page.landingPage) {
-      this.props.fetchPage(
-        "https://admin.mountler.com/api-v1/landing-page",
-        "landingPage"
-      ).then((data) => {
-        // Di sini Anda dapat melakukan penanganan data yang diterima setelah promise selesai
-        console.log(data);
-      });
-    }
+    if (!this.props.page.landingPage)
+      this.props.fetchPage(`http://localhost:3500/api-v1/landing-page`, "landingPage");
   }
-  
   render() {
     const { page } = this.props;
 

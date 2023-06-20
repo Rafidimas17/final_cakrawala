@@ -75,7 +75,7 @@ describe("API ENDPOINT TESTING", () => {
           noIdMember: "21123456789",
           phoneMember: "987654321",
         },
-        {
+        { 
           nameMember: "John Doe",
           addressMember: "456 Elm St",
           noIdMember: "3987654321",
