@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Fade from "react-reveal";
-
+import { connect } from "react-redux";
 import Header from "../parts/Header";
 import Button from "../elements/Button";
 import Stepper, {
@@ -16,13 +16,17 @@ import Completed from "../parts/Checkout/Completed";
 
 import ItemDetails from "../json/bookingInformation.json";
 
-export default class Checkout extends Component {
+import ReservationSummary from "../parts/Checkout/ReservationSummary";
+
+class Checkout extends Component {
   state = {
     data: [
       {
         fullname: "",
         address: "",
         no_id: "",
+        email:"",
+        country:"",
         phone: "",
         proofPayment: "",
         bankName: "",
@@ -35,12 +39,15 @@ export default class Checkout extends Component {
     const { name, value } = event.target;
     this.setState((prevState) => {
       const updatedRows = [...prevState.data];
-      updatedRows[rowIndex][name] = value;
+      if (updatedRows[rowIndex]) {
+        updatedRows[rowIndex][name] = value;
+      }
       return {
         data: updatedRows,
       };
     });
   };
+  
   handleAddRow = () => {
     this.setState((prevState) => ({
       data: [
@@ -48,6 +55,8 @@ export default class Checkout extends Component {
         {
           fullname: "",
           address: "",
+          email:"",
+          country:"",
           no_id: "",
           phone: "",
         },
@@ -70,10 +79,29 @@ export default class Checkout extends Component {
 
   render() {
     const { data } = this.state;
+    const { checkout } = this.props;
+    if (!checkout)
+      return (
+        <div className="container">
+          <div
+            className="row align-items-center justify-content-center text-center"
+            style={{ height: "100vh" }}>
+            <div className="col-3">
+              Pilih tanggal dulu
+              <div>
+                <Button
+                  className="btn mt-5"
+                  type="button"
+                  onClick={() => this.props.history.goBack()}
+                  isLight>
+                  Back
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
 
-    const checkout = {
-      duration: 3,
-    };
     const steps = {
       bookingInformation: {
         title: null,
@@ -130,38 +158,21 @@ export default class Checkout extends Component {
                       data[index].phone !== ""
                   ) && (
                     <Fade>
-                      <Button
-                        className="btn mb-3"
-                        type="button"
-                        isBlock
-                        isPrimary
-                        hasShadow
-                        onClick={nextStep}>
-                        Continue to Book
-                      </Button>
-                      {/* <Button
-        className="btn mb-3"
-        type="button"
-        isBlock
-        isPrimary
-        hasShadow
-        onClick={() => console.log(data)}
-      >
-        Print
-      </Button> */}
+                      <div className="row">
+                        <div className="col d-flex justify-content-center">
+                          <Button
+                            className="btn mb-3"
+                            type="button"
+                            isBlock
+                            isPrimary
+                            hasShadow
+                            onClick={nextStep}>
+                            Continue to Book
+                          </Button>
+                        </div>
+                      </div>
                     </Fade>
                   )}
-
-                  {/* <Button
-                    className="btn"
-                    type="link"
-                    isBlock
-                    isLight
-                    onClick={prevStep}
-                    // href={`/properties/${ItemDetails}`}
-                  >
-                    Cancel
-                  </Button> */}
                 </Controller>
               )}
               {CurrentStep === "payment" && (
@@ -215,3 +226,7 @@ export default class Checkout extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  checkout: state.checkout,
+});
+export default connect(mapStateToProps)(Checkout);
