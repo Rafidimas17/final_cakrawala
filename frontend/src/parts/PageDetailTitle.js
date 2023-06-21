@@ -14,7 +14,7 @@ export default function PageDetailTitle({ data, breadcrumb }) {
               {data.title}
             </h1>
             <span className="text-gray-600" style={{ fontFamily: "Poppins" }}>
-              {data.city},{data.country}
+              {data.trackId[0].city},{data.trackId[0].province}
             </span>
           </div>
           <div className="col"></div>

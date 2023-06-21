@@ -20,7 +20,7 @@ function MostPicked(props) {
                   <figure className="img-wrapper">
                       <img
                         src={
-                          item.imageId[0]
+                          item.imageId[0].imageUrl
                             ? `${process.env.REACT_APP_HOST}/${item.imageId[0].imageUrl}`
                             : ""
                         }
