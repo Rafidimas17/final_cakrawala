@@ -17,24 +17,24 @@ class LandingPage extends Component {
     window.scrollTo(0, 0);
 
     if (!this.props.page.landingPage)
-      this.props.fetchPage(`http://localhost:3500/api-v1/landing-page`, "landingPage");
+      this.props.fetchPage(`${process.env.REACT_APP_HOST}/api-v1/landing-page`, "landingPage");
   }
   render() {
     const { page } = this.props;
 
-    console.log(page)
+    // console.log(page)
     if (!page.hasOwnProperty("landingPage")) return null;
 
     return (
       <>
         <Header {...this.props}></Header>
-        <Hero refMostPicked={this.refMostPicked} data={page.hero} />
+        <Hero refMostPicked={this.refMostPicked} data={page.landingPage.hero} />
         <MostPicked
           refMostPicked={this.refMostPicked}
-          data={page.mostPicked}
+          data={page.landingPage.mostPicked}
         />
-        <Categories data={page.categories} />
-        <Testimony data={page.testimonial} />
+        <Categories data={page.landingPage.category} />
+        <Testimony data={page.landingPage.testimonial} />
         <Footer />
       </>
     );

@@ -1,7 +1,7 @@
 import React from "react";
 import Fade from "react-reveal/Fade";
 
-import Button from "elements/Button";
+import Button from "../elements/Button";
 
 export default function Activities({ data }) {
   if (data.length === 0) return null;

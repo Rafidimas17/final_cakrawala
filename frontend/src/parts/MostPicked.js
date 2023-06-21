@@ -11,26 +11,28 @@ function MostPicked(props) {
             return (
               <div
                 key={`mostpicked-${index}`}
-                className={`item column-4${index === 0 ? " row-2" : " row-1"}`}
-              >
+                className={`item column-4${index === 0 ? " row-2" : " row-1"}`}>
                 <div className="card card-featured">
                   <div className="tag">
                     ${item.price}
                     <span className="font-weight-light"> / {item.unit}</span>
                   </div>
                   <figure className="img-wrapper">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className="img-cover"
-                    />
-                  </figure>
+                      <img
+                        src={
+                          item.imageId[0]
+                            ? `${process.env.REACT_APP_HOST}/${item.imageId[0].imageUrl}`
+                            : ""
+                        }
+                        alt={item.title}
+                        className="img-cover"
+                      />
+                    </figure>
                   <div className="meta-wrapper">
                     <Button
                       className="btn"
                       type="link"
-                      href={`/properties/${item._id}`}
-                    >
+                      href={`/properties/${item._id}`}>
                       <h5>{item.name}</h5>
                     </Button>
                     <span>

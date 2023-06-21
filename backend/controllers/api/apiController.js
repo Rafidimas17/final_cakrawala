@@ -40,7 +40,8 @@ module.exports = {
       const mostPicked = await Item.find()
         .select("_id title country city price unit imageId")
         .limit(5)
-        .populate({ path: "imageId", select: "_id imageUrl" });
+        .populate({ path: "imageId", select: "_id imageUrl" })
+        .populate({ path: "trackId", select: "_id name city province" });
 
       const category = await Category.find()
         .select("_id name")
@@ -55,7 +56,14 @@ module.exports = {
             select: "_id imageUrl",
             perDocumentLimit: 1,
           },
-        });
+          populate: {
+            path: "trackId",
+            select: "_id name city province",
+            perDocumentLimit: 1,
+          },
+        })
+       ;
+
 
       const treveler = await Treveler.find();
       const treasure = await Treasure.find();
@@ -107,11 +115,11 @@ module.exports = {
         .populate({ path: "featureId", select: "_id name qty imageUrl" })
         .populate({ path: "activityId", select: "_id name type imageUrl" })
         .populate({ path: "imageId", select: "_id imageUrl" })
-        .populate({ path: "trackId", select: "_id name" })
+        .populate({ path: "trackId", select: "_id name city province" })
         .populate({ path: "bankId", select: "_id name" });
 
       // const bank = await Bank.find();
-      const address = item.trackId[0].name;
+      const address = item.trackId[0].city;
       const testimonial = {
         _id: "asd1293uasdads1",
         imageUrl: "images/testimonial1.jpg",

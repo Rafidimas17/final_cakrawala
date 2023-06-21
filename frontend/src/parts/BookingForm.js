@@ -113,10 +113,10 @@ class BookingForm extends Component {
         <label htmlFor="date">Choose Track</label>
         <Form.Select className="select" name="track" onChange={this.updateData} value={data.track} required>
         <option value={null} required>--Pilih Track--</option>
-          {itemDetails.track.map((street, index) => {
+          {itemDetails.trackId.map((street, index) => {
             return (
-              <option key={`street-Rp{index}`} value={street.nameTrack}>
-                {street.nameTrack}
+              <option key={`street-Rp{index}`} value={street.name}>
+                {street.name}
               </option>
             );
           })}
